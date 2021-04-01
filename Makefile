@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -17,9 +15,16 @@
 # specific language governing permissions and limitations
 # under the License.
 
-set -e
+default: update
 
-bash "$(dirname "$0")"/update_collect_protocol.sh
-bash "$(dirname "$0")"/update_query_protocol.sh
+.PHONY: update-collect
+update-collect:
+	bash scripts/update_collect_protocol.sh
 
-rm -rf temp
+.PHONY: update-query
+update-query:
+	bash scripts/update_query_protocol.sh
+
+.PHONY: update
+update:
+	bash scripts/update.sh
