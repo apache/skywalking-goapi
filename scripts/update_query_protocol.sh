@@ -19,7 +19,34 @@
 
 set -e
 
-bash "$(dirname "$0")"/update_collect_protocol.sh
-bash "$(dirname "$0")"/update_query_protocol.sh
+BASEDIR=$(dirname "$0")/..
+TEMPDIR="$BASEDIR"/temp
 
-rm -rf temp
+. "$BASEDIR"/dependencies.sh
+
+if [[ ! -d "$TEMPDIR" ]]; then
+  mkdir -p "$TEMPDIR"
+else
+  rm -rf "${TEMPDIR:?}"/*
+fi
+
+curl -sLo "$TEMPDIR"/query-protocol.tgz https://github.com/apache/skywalking-query-protocol/archive/"${QUERY_PROTOCOL_SHA}".tar.gz
+
+if [[ ! -d "$TEMPDIR"/query-protocol ]]; then
+  mkdir "$TEMPDIR"/query-protocol
+else
+  rm -rf "$TEMPDIR"/query-protocol/*
+fi
+
+tar -zxf "$TEMPDIR"/query-protocol.tgz -C "$TEMPDIR"/query-protocol --strip 1
+
+rm -rf "$TEMPDIR"/query-protocol.tgz
+
+go get github.com/99designs/gqlgen
+
+"$(go env GOPATH)"/bin/gqlgen -h > /dev/null 2>&1 || GO111MODULE=off go get github.com/99designs/gqlgen
+"$(go env GOPATH)"/bin/gqlgen generate
+
+rm -rf "$TEMPDIR"/query-protocol
+
+go mod tidy
