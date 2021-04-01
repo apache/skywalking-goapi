@@ -42,7 +42,7 @@ tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 
 
 find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
 
-rm -rf "$BASEDIR"/{agent,common,event,language,logging,management,servicemesh}
+rm -rf "$BASEDIR"/collect
 
 go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.26.0
 go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
@@ -53,6 +53,6 @@ go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
   --go-grpc_out="$BASEDIR" \
   "$TEMPDIR"/collect-protocol/*/*.proto
 
-cp -R "$BASEDIR"/skywalking/network/* "$BASEDIR"/ && rm -rf "$BASEDIR"/skywalking
+mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ && rm -rf "$BASEDIR"/skywalking.apache.org
 
 go mod tidy

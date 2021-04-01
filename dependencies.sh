@@ -17,5 +17,5 @@
 # specific language governing permissions and limitations
 # under the License.
 
-export COLLECT_PROTOCOL_SHA=c01af3b883217939e374d2245eac92036fb7394a
+export COLLECT_PROTOCOL_SHA=gopackage
 export QUERY_PROTOCOL_SHA=42d6783d8c1a0d0d4c2b28e58dc1f47dd554964e

@@ -1,4 +1,4 @@
-module skywalking/network
+module skywalking.apache.org/repo/goapi
 
 go 1.16
 
