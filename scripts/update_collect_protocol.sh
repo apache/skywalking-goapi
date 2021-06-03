@@ -19,40 +19,64 @@
 
 set -e
 
-BASEDIR=$(dirname "$0")/..
-TEMPDIR="$BASEDIR"/temp
 
+export BASEDIR=$(dirname "$0")/..
+export TEMPDIR="$BASEDIR"/temp
 . "$BASEDIR"/dependencies.sh
 
-if [[ ! -d "$TEMPDIR" ]]; then
-  mkdir -p "$TEMPDIR"
-else
-  rm -rf "${TEMPDIR:?}"/*
-fi
+function makeProtocolHome(){
+    if [[ ! -d "$TEMPDIR" ]]; then
+      mkdir -p "$TEMPDIR"
+    else
+      rm -rf "${TEMPDIR:?}"/*
+    fi
 
-curl -sLo "$TEMPDIR"/collect-protocol.tgz https://github.com/apache/skywalking-data-collect-protocol/archive/"${COLLECT_PROTOCOL_SHA}".tar.gz
+    curl -sLo "$TEMPDIR"/collect-protocol.tgz https://github.com/apache/skywalking-data-collect-protocol/archive/"${COLLECT_PROTOCOL_SHA}".tar.gz
 
-if [[ ! -d "$TEMPDIR"/collect-protocol ]]; then
-  mkdir "$TEMPDIR"/collect-protocol
-else
-  rm -rf "$TEMPDIR"/collect-protocol/*
-fi
+    if [[ ! -d "$TEMPDIR"/collect-protocol ]]; then
+      mkdir "$TEMPDIR"/collect-protocol
+    else
+      rm -rf "$TEMPDIR"/collect-protocol/*
+    fi
 
-tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 1
+    tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 1
 
-find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
+    find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
 
-rm -rf "$BASEDIR"/collect
+    if [[ ! -d "$TEMPDIR"/collect-protocol/satellite ]]; then
+      mkdir "$TEMPDIR"/collect-protocol/satellite
+    else
+      rm -rf "$TEMPDIR"/collect-protocol/satellite/*
+    fi
 
-go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.26.0
-go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+    cp -R "$BASEDIR"/satellite/protocol/* "$TEMPDIR"/collect-protocol/satellite/
+}
 
-"$BASEDIR"/scripts/protoc.sh \
-  --proto_path="$TEMPDIR"/collect-protocol \
-  --go_out="$BASEDIR" \
-  --go-grpc_out="$BASEDIR" \
-  "$TEMPDIR"/collect-protocol/*/*.proto
 
-mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ && rm -rf "$BASEDIR"/skywalking.apache.org
+function cleanHistoryCodes(){
+    rm -rf "$BASEDIR"/collect
+    cd "$BASEDIR"/satellite
+    ls . |grep -v protocol| xargs -t rm -rf
+    cd -
+}
 
-go mod tidy
+
+function generateCodes(){
+    go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.26.0
+    go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+
+    "$BASEDIR"/scripts/protoc.sh \
+      --proto_path="$TEMPDIR"/collect-protocol \
+      --go_out="$BASEDIR" \
+      --go-grpc_out="$BASEDIR" \
+      "$TEMPDIR"/collect-protocol/*/*.proto
+
+    mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
+    && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/* "$BASEDIR"/satellite \
+    && rm -rf "$BASEDIR"/skywalking.apache.org
+    go mod tidy
+}
+
+makeProtocolHome
+cleanHistoryCodes
+generateCodes

@@ -43,8 +43,8 @@ enum EventType{
   ServiceMeshType = 7;
 }
 
-// Event is the transfer unit in Satellite.
-message Event {
+// SatelliteEvent is the transfer unit in Satellite.
+message SatelliteEvent {
 
   // The occur time.
   int64 timestamp = 1;

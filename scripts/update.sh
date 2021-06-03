@@ -21,6 +21,5 @@ set -e
 
 bash "$(dirname "$0")"/update_collect_protocol.sh
 bash "$(dirname "$0")"/update_query_protocol.sh
-bash "$(dirname "$0")"/update_satellite_protocol.sh
 
 rm -rf temp
