@@ -25,6 +25,10 @@ update-collect:
 update-query:
 	bash scripts/update_query_protocol.sh
 
+.PHONY: update-satellite
+update-query:
+	bash scripts/update_satellite_protocol.sh
+
 .PHONY: update
 update:
 	bash scripts/update.sh
