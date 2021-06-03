@@ -42,12 +42,20 @@ tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 
 
 find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
 
-cp -R "$BASEDIR"/protocol/satellite-protocol "$TEMPDIR"
+
+if [[ ! -d "$TEMPDIR"/satellite-protocol ]]; then
+  mkdir "$TEMPDIR"/satellite-protocol
+else
+  rm -rf "$TEMPDIR"/satellite-protocol/*
+fi
+
+cp -R "$BASEDIR"/satellite/protocol/* "$TEMPDIR"/satellite-protocol
 
 cp -R "$TEMPDIR"/collect-protocol/* "$TEMPDIR"/satellite-protocol
 
-rm -rf "$BASEDIR"/satellite
-
+cd "$BASEDIR"/satellite
+ls . |grep -v protocol| xargs -t rm -rf
+cd -
 
 go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.26.0
 go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
@@ -56,8 +64,8 @@ go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
   --proto_path="$TEMPDIR"/satellite-protocol \
   --go_out="$BASEDIR" \
   --go-grpc_out="$BASEDIR" \
-  "$TEMPDIR"/satellite-protocol/satellite/*.proto
+  "$TEMPDIR"/satellite-protocol/*.proto
 
-mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite "$BASEDIR"/ && rm -rf "$BASEDIR"/skywalking.apache.org
+mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/* "$BASEDIR"/satellite && rm -rf "$BASEDIR"/skywalking.apache.org
 
 go mod tidy

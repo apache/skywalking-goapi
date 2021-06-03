@@ -26,7 +26,7 @@ update-query:
 	bash scripts/update_query_protocol.sh
 
 .PHONY: update-satellite
-update-query:
+update-satellite:
 	bash scripts/update_satellite_protocol.sh
 
 .PHONY: update
