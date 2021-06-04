@@ -33,7 +33,7 @@ import "service-mesh-probe/service-mesh.proto";
 import "event/Event.proto";
 
 // SniffType declares the supported transfer data type.
-enum SniffType{
+enum SniffType {
   CLRMetricType = 0;
   JVMMetricType = 1;
   MeterType = 2;
