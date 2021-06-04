@@ -1,7 +1,7 @@
 # SkyWalking Go APIs
 
 This repository contains the Go files generated from
-the [data collect protocol](http://github.com/apache/skywalking-data-collect-protocol) and
+the sniff protocol([data collect protocol](http://github.com/apache/skywalking-data-collect-protocol), the satellite protocol) and
 the [query protocol](http://github.com/apache/skywalking-query-protocol) for convenient use.
 
 You can use the following commands to install this module.
@@ -10,19 +10,21 @@ You can use the following commands to install this module.
 go get skywalking.apache.org/repo/goapi
 ```
 
-## Data Collect Protocol
+## Data Sniff Protocol
 
 To use the Go files generated from
-the [data collect protocol](http://github.com/apache/skywalking-data-collect-protocol), use the import
-path `skywalking.apache.org/repo/goapi/collect`, for example,
+the [data collect protocol](http://github.com/apache/skywalking-data-collect-protocol) and the satellite protocol, use the import
+path `skywalking.apache.org/repo/goapi/collect` and `skywalking.apache.org/repo/goapi/satellite`, for example,
 
 ```go
 package main
 
 import (
 	"fmt"
+	"time"
 
-	"skywalking.apache.org/repo/goapi/collect/event/v3"
+	v3 "skywalking.apache.org/repo/goapi/collect/event/v3"
+	v1 "skywalking.apache.org/repo/goapi/satellite/event/v1"
 )
 
 func main() {
@@ -37,8 +39,19 @@ func main() {
 		EndTime:    0,
 	}
 
-	fmt.Printf("+%v", event)
+	sniffData := &v1.SniffData{
+		Timestamp: time.Now().Unix() / 1e6,
+		Name:      "Satellite_event",
+		Type:      v1.SniffType_EventType,
+		Meta:      nil,
+		Remote:    true,
+		Data: &v1.SniffData_Event{
+			Event: event,
+		},
+	}
+	fmt.Printf("+%v", sniffData)
 }
+
 ```
 
 ## Query Protocol
@@ -64,6 +77,7 @@ func main() {
 	fmt.Printf("+%v", events)
 }
 ```
+
 
 ## Development
 

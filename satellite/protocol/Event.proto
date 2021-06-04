@@ -30,9 +30,10 @@ import "logging/Logging.proto";
 import "management/Management.proto";
 import "profile/Profile.proto";
 import "service-mesh-probe/service-mesh.proto";
+import "event/Event.proto";
 
-// EventType declares the supported transfer data type.
-enum EventType{
+// SniffType declares the supported transfer data type.
+enum SniffType{
   CLRMetricType = 0;
   JVMMetricType = 1;
   MeterType = 2;
@@ -41,17 +42,18 @@ enum EventType{
   ManagementType = 5;
   ProfileType = 6;
   ServiceMeshType = 7;
+  EventType = 8;
 }
 
-// SatelliteEvent is the transfer unit in Satellite.
-message SatelliteEvent {
+// SniffData is the transfer unit in Satellite.
+message SniffData {
 
   // The occur time.
   int64 timestamp = 1;
   // unique event name.
-  string name=2;
+  string name = 2;
   // The data type.
-  EventType type = 3;
+  SniffType type = 3;
   // Whether to send to remote. It is used in sampling.
   bool remote = 4;
   // Additional meta-information.
@@ -67,5 +69,6 @@ message SatelliteEvent {
     InstanceProperties instance = 11;
     ThreadSnapshot profile = 12;
     ServiceMeshMetric serviceMesh = 13;
+    Event event = 14;
   }
 }

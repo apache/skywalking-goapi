@@ -17,9 +17,9 @@
 
 default: update
 
-.PHONY: update-collect
-update-collect:
-	bash scripts/update_collect_protocol.sh
+.PHONY: update-sniff
+update-sniff:
+	bash scripts/update_sniff_protocol.sh
 
 .PHONY: update-query
 update-query:
