@@ -19,60 +19,59 @@
 
 set -e
 
-
 export BASEDIR=$(dirname "$0")/..
 export TEMPDIR="$BASEDIR"/temp
 . "$BASEDIR"/dependencies.sh
 
 function makeProtocolHome(){
-    if [[ ! -d "$TEMPDIR" ]]; then
-      mkdir -p "$TEMPDIR"
-    else
-      rm -rf "${TEMPDIR:?}"/*
-    fi
+  if [[ ! -d "$TEMPDIR" ]]; then
+    mkdir -p "$TEMPDIR"
+  else
+    rm -rf "${TEMPDIR:?}"/*
+  fi
 
-    curl -sLo "$TEMPDIR"/collect-protocol.tgz https://github.com/apache/skywalking-data-collect-protocol/archive/"${COLLECT_PROTOCOL_SHA}".tar.gz
+  curl -sLo "$TEMPDIR"/collect-protocol.tgz https://github.com/apache/skywalking-data-collect-protocol/archive/"${COLLECT_PROTOCOL_SHA}".tar.gz
 
-    if [[ ! -d "$TEMPDIR"/collect-protocol ]]; then
-      mkdir "$TEMPDIR"/collect-protocol
-    else
-      rm -rf "$TEMPDIR"/collect-protocol/*
-    fi
+  if [[ ! -d "$TEMPDIR"/collect-protocol ]]; then
+    mkdir "$TEMPDIR"/collect-protocol
+  else
+    rm -rf "$TEMPDIR"/collect-protocol/*
+  fi
 
-    tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 1
+  tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 1
 
-    find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
+  find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
 
-    if [[ ! -d "$TEMPDIR"/collect-protocol/satellite ]]; then
-      mkdir "$TEMPDIR"/collect-protocol/satellite
-    else
-      rm -rf "$TEMPDIR"/collect-protocol/satellite/*
-    fi
+  if [[ ! -d "$TEMPDIR"/collect-protocol/satellite ]]; then
+    mkdir "$TEMPDIR"/collect-protocol/satellite
+  else
+    rm -rf "$TEMPDIR"/collect-protocol/satellite/*
+  fi
 
-    cp -R "$BASEDIR"/satellite/data/v1/*.proto "$TEMPDIR"/collect-protocol/satellite/
+  cp -R "$BASEDIR"/satellite/data/v1/*.proto "$TEMPDIR"/collect-protocol/satellite/
 }
 
 
 function cleanHistoryCodes(){
-    rm -rf "$BASEDIR"/collect
-    find "$BASEDIR"/satellite -name "*.go" -exec rm {} \;
+  rm -rf "$BASEDIR"/collect
+  find "$BASEDIR"/satellite -name "*.go" -exec rm {} \;
 }
 
 
 function generateCodes(){
-    go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.26.0
-    go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+  go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.26.0
+  go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
 
-    "$BASEDIR"/scripts/protoc.sh \
-      --proto_path="$TEMPDIR"/collect-protocol \
-      --go_out="$BASEDIR" \
-      --go-grpc_out="$BASEDIR" \
-      "$TEMPDIR"/collect-protocol/*/*.proto
+  "$BASEDIR"/scripts/protoc.sh \
+    --proto_path="$TEMPDIR"/collect-protocol \
+    --go_out="$BASEDIR" \
+    --go-grpc_out="$BASEDIR" \
+    "$TEMPDIR"/collect-protocol/*/*.proto
 
-    mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
-    && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/data/v1/* "$BASEDIR"/satellite/data/v1 \
-    && rm -rf "$BASEDIR"/skywalking.apache.org
-    go mod tidy
+  mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
+  && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/data/v1/* "$BASEDIR"/satellite/data/v1 \
+  && rm -rf "$BASEDIR"/skywalking.apache.org
+  go mod tidy
 }
 
 makeProtocolHome
