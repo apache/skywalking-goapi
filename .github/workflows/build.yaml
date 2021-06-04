@@ -36,17 +36,6 @@ jobs:
 
       - name: Build
         run: make
-  check:
-    name: Check
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-          with:
-            submodules: true
 
-        - uses: actions/setup-go@v2
-          with:
-            go-version: 1.16
-
-        - name: Check
-          run: make update && make check
+      - name: Check
+        run: make check
