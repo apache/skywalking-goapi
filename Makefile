@@ -28,3 +28,13 @@ update-query:
 .PHONY: update
 update:
 	bash scripts/update.sh
+
+.PHONY: check
+check:
+	$(GO) mod tidy > /dev/null
+	@if [ ! -z "`git status -s`" ]; then \
+		echo "Following files are not consistent with CI:"; \
+		git status -s; \
+		git diff; \
+		exit 1; \
+	fi

@@ -24,7 +24,7 @@ import (
 	"time"
 
 	v3 "skywalking.apache.org/repo/goapi/collect/event/v3"
-	v1 "skywalking.apache.org/repo/goapi/satellite/event/v1"
+	v1 "skywalking.apache.org/repo/goapi/satellite/data/v1"
 )
 
 func main() {

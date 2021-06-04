@@ -49,15 +49,13 @@ function makeProtocolHome(){
       rm -rf "$TEMPDIR"/collect-protocol/satellite/*
     fi
 
-    cp -R "$BASEDIR"/satellite/protocol/* "$TEMPDIR"/collect-protocol/satellite/
+    cp -R "$BASEDIR"/satellite/data/v1/*.proto "$TEMPDIR"/collect-protocol/satellite/
 }
 
 
 function cleanHistoryCodes(){
     rm -rf "$BASEDIR"/collect
-    cd "$BASEDIR"/satellite
-    ls . |grep -v protocol| xargs -t rm -rf
-    cd -
+    find "$BASEDIR"/satellite -name "*.go" -exec rm {} \;
 }
 
 
@@ -72,7 +70,7 @@ function generateCodes(){
       "$TEMPDIR"/collect-protocol/*/*.proto
 
     mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
-    && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/* "$BASEDIR"/satellite \
+    && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/data/v1/* "$BASEDIR"/satellite/data/v1 \
     && rm -rf "$BASEDIR"/skywalking.apache.org
     go mod tidy
 }

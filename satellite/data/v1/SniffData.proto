@@ -20,7 +20,7 @@ syntax = "proto3";
 
 package skywalking.v3;
 
-option go_package = "skywalking.apache.org/repo/goapi/satellite/event/v1";
+option go_package = "skywalking.apache.org/repo/goapi/satellite/data/v1";
 
 import "language-agent/CLRMetric.proto";
 import "language-agent/JVMMetric.proto";
