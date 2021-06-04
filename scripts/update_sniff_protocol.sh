@@ -40,7 +40,7 @@ function makeProtocolHome(){
 
   tar -zxf "$TEMPDIR"/collect-protocol.tgz -C "$TEMPDIR"/collect-protocol --strip 1
 
-  find "$TEMPDIR"/collect-protocol -name "*Compat.proto" -exec rm {} \;
+  find "$TEMPDIR"/collect-protocol -regex ".*[cC]ompat.proto" -exec rm {} \;
 
   if [[ ! -d "$TEMPDIR"/collect-protocol/satellite ]]; then
     mkdir "$TEMPDIR"/collect-protocol/satellite
