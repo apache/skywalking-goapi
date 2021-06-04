@@ -17,9 +17,9 @@
 
 default: update
 
-.PHONY: update-collect
-update-collect:
-	bash scripts/update_collect_protocol.sh
+.PHONY: update-sniff
+update-sniff:
+	bash scripts/update_sniff_protocol.sh
 
 .PHONY: update-query
 update-query:
@@ -28,3 +28,13 @@ update-query:
 .PHONY: update
 update:
 	bash scripts/update.sh
+
+.PHONY: check
+check:
+	go mod tidy > /dev/null
+	@if [ ! -z "`git status -s`" ]; then \
+		echo "Following files are not consistent with CI:"; \
+		git status -s; \
+		git diff; \
+		exit 1; \
+	fi
