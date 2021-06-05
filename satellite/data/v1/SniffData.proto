@@ -70,5 +70,8 @@ message SniffData {
     ThreadSnapshot profile = 12;
     ServiceMeshMetric serviceMesh = 13;
     Event event = 14;
+    InstancePingPkg instancePing = 15;
+    ProfileTaskCommandQuery profileTaskQuery = 16;
+    ProfileTaskFinishReport profileTaskFinish = 17;
   }
 }
