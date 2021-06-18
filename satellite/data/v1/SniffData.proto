@@ -31,6 +31,7 @@ import "management/Management.proto";
 import "profile/Profile.proto";
 import "service-mesh-probe/service-mesh.proto";
 import "event/Event.proto";
+import "common/Common.proto";
 
 // SniffType declares the supported transfer data type.
 enum SniffType {
@@ -73,5 +74,6 @@ message SniffData {
     InstancePingPkg instancePing = 15;
     ProfileTaskCommandQuery profileTaskQuery = 16;
     ProfileTaskFinishReport profileTaskFinish = 17;
+    Commands commands = 18;
   }
 }
