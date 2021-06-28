@@ -26,6 +26,7 @@ import "language-agent/CLRMetric.proto";
 import "language-agent/JVMMetric.proto";
 import "language-agent/Meter.proto";
 import "language-agent/Tracing.proto";
+import "language-agent/ConfigurationDiscoveryService.proto";
 import "logging/Logging.proto";
 import "management/Management.proto";
 import "profile/Profile.proto";
@@ -44,6 +45,7 @@ enum SniffType {
   ProfileType = 6;
   ServiceMeshType = 7;
   EventType = 8;
+  ConfigurationDiscoveryServiceType = 9;
 }
 
 // SniffData is the transfer unit in Satellite.
@@ -75,5 +77,6 @@ message SniffData {
     ProfileTaskCommandQuery profileTaskQuery = 16;
     ProfileTaskFinishReport profileTaskFinish = 17;
     Commands commands = 18;
+    ConfigurationSyncRequest configurationSyncRequest = 19;
   }
 }
