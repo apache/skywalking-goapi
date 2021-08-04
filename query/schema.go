@@ -9,10 +9,17 @@ import (
 )
 
 type AlarmMessage struct {
-	StartTime int64  `json:"startTime"`
-	Scope     *Scope `json:"scope"`
-	ID        string `json:"id"`
-	Message   string `json:"message"`
+	StartTime int64       `json:"startTime"`
+	Scope     *Scope      `json:"scope"`
+	ID        string      `json:"id"`
+	Message   string      `json:"message"`
+	Events    []*Event    `json:"events"`
+	Tags      []*KeyValue `json:"tags"`
+}
+
+type AlarmTag struct {
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
 }
 
 type AlarmTrend struct {
@@ -178,7 +185,7 @@ type EventQueryCondition struct {
 	Type   *EventType   `json:"type"`
 	Time   *Duration    `json:"time"`
 	Order  *Order       `json:"order"`
-	Size   *int         `json:"size"`
+	Paging *Pagination  `json:"paging"`
 }
 
 type Events struct {
@@ -1122,6 +1129,7 @@ const (
 	TemplateTypeTopologyEndpoint                TemplateType = "TOPOLOGY_ENDPOINT"
 	TemplateTypeTopologyServiceRelation         TemplateType = "TOPOLOGY_SERVICE_RELATION"
 	TemplateTypeTopologyServiceInstanceRelation TemplateType = "TOPOLOGY_SERVICE_INSTANCE_RELATION"
+	TemplateTypeTopologyEndpointRelation        TemplateType = "TOPOLOGY_ENDPOINT_RELATION"
 )
 
 var AllTemplateType = []TemplateType{
@@ -1131,11 +1139,12 @@ var AllTemplateType = []TemplateType{
 	TemplateTypeTopologyEndpoint,
 	TemplateTypeTopologyServiceRelation,
 	TemplateTypeTopologyServiceInstanceRelation,
+	TemplateTypeTopologyEndpointRelation,
 }
 
 func (e TemplateType) IsValid() bool {
 	switch e {
-	case TemplateTypeDashboard, TemplateTypeTopologyService, TemplateTypeTopologyInstance, TemplateTypeTopologyEndpoint, TemplateTypeTopologyServiceRelation, TemplateTypeTopologyServiceInstanceRelation:
+	case TemplateTypeDashboard, TemplateTypeTopologyService, TemplateTypeTopologyInstance, TemplateTypeTopologyEndpoint, TemplateTypeTopologyServiceRelation, TemplateTypeTopologyServiceInstanceRelation, TemplateTypeTopologyEndpointRelation:
 		return true
 	}
 	return false
