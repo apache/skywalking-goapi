@@ -69,7 +69,6 @@ type BrowserErrorLogQueryCondition struct {
 	ServiceID        *string        `json:"serviceId"`
 	ServiceVersionID *string        `json:"serviceVersionId"`
 	PagePathID       *string        `json:"pagePathId"`
-	PagePath         *string        `json:"pagePath"`
 	Category         *ErrorCategory `json:"category"`
 	QueryDuration    *Duration      `json:"queryDuration"`
 	Paging           *Pagination    `json:"paging"`
@@ -245,7 +244,6 @@ type LogQueryCondition struct {
 	ServiceID                  *string              `json:"serviceId"`
 	ServiceInstanceID          *string              `json:"serviceInstanceId"`
 	EndpointID                 *string              `json:"endpointId"`
-	EndpointName               *string              `json:"endpointName"`
 	RelatedTrace               *TraceScopeCondition `json:"relatedTrace"`
 	QueryDuration              *Duration            `json:"queryDuration"`
 	Paging                     *Pagination          `json:"paging"`
@@ -258,6 +256,23 @@ type LogQueryCondition struct {
 type LogTag struct {
 	Key   string  `json:"key"`
 	Value *string `json:"value"`
+}
+
+type LogTestMetrics struct {
+	Name      string      `json:"name"`
+	Tags      []*KeyValue `json:"tags"`
+	Value     int64       `json:"value"`
+	Timestamp int64       `json:"timestamp"`
+}
+
+type LogTestRequest struct {
+	Log string `json:"log"`
+	Dsl string `json:"dsl"`
+}
+
+type LogTestResponse struct {
+	Log     *Log              `json:"log"`
+	Metrics []*LogTestMetrics `json:"metrics"`
 }
 
 type Logs struct {
@@ -521,7 +536,6 @@ type TraceQueryCondition struct {
 	ServiceInstanceID *string     `json:"serviceInstanceId"`
 	TraceID           *string     `json:"traceId"`
 	EndpointID        *string     `json:"endpointId"`
-	EndpointName      *string     `json:"endpointName"`
 	QueryDuration     *Duration   `json:"queryDuration"`
 	MinTraceDuration  *int        `json:"minTraceDuration"`
 	MaxTraceDuration  *int        `json:"maxTraceDuration"`
