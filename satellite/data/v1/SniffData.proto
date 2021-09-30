@@ -51,8 +51,8 @@ enum SniffType {
   ServiceMeshType = 7;
   EventType = 8;
   ConfigurationDiscoveryServiceType = 9;
-  EnvoyAlsV2Type = 10;
-  EnvoyAlsV3Type = 11;
+  EnvoyALSV2Type = 10;
+  EnvoyALSV3Type = 11;
   EnvoyMetricsV2Type = 12;
   EnvoyMetricsV3Type = 13;
 }
@@ -87,8 +87,8 @@ message SniffData {
     ProfileTaskFinishReport profileTaskFinish = 17;
     Commands commands = 18;
     ConfigurationSyncRequest configurationSyncRequest = 19;
-    envoy.service.accesslog.v2.StreamAccessLogsMessage envoyAlsV2 = 20;
-    envoy.service.accesslog.v3.StreamAccessLogsMessage envoyAlsV3 = 21;
+    envoy.service.accesslog.v2.StreamAccessLogsMessage envoyALSV2 = 20;
+    envoy.service.accesslog.v3.StreamAccessLogsMessage envoyALSV3 = 21;
     envoy.service.metrics.v2.StreamMetricsMessage envoyMetricsV2 = 22;
     envoy.service.metrics.v3.StreamMetricsMessage envoyMetricsV3 = 23;
   }
