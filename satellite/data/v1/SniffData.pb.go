@@ -24,10 +24,6 @@
 package v1
 
 import (
-	v2 "github.com/envoyproxy/go-control-plane/envoy/service/accesslog/v2"
-	v38 "github.com/envoyproxy/go-control-plane/envoy/service/accesslog/v3"
-	v21 "github.com/envoyproxy/go-control-plane/envoy/service/metrics/v2"
-	v39 "github.com/envoyproxy/go-control-plane/envoy/service/metrics/v3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -39,6 +35,10 @@ import (
 	v31 "skywalking.apache.org/repo/goapi/collect/logging/v3"
 	v32 "skywalking.apache.org/repo/goapi/collect/management/v3"
 	v34 "skywalking.apache.org/repo/goapi/collect/servicemesh/v3"
+	v2 "skywalking.apache.org/repo/goapi/proto/envoy/service/accesslog/v2"
+	v38 "skywalking.apache.org/repo/goapi/proto/envoy/service/accesslog/v3"
+	v21 "skywalking.apache.org/repo/goapi/proto/envoy/service/metrics/v2"
+	v39 "skywalking.apache.org/repo/goapi/proto/envoy/service/metrics/v3"
 	sync "sync"
 )
 

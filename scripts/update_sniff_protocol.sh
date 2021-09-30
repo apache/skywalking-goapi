@@ -50,6 +50,7 @@ function addProtocol(){
 
 function cleanHistoryCodes(){
   rm -rf "$BASEDIR"/collect
+  rm -rf "$BASEDIR"/proto
   find "$BASEDIR"/satellite -name "*.go" -exec rm {} \;
 }
 
@@ -70,52 +71,30 @@ function generateCodes(){
 
   "$BASEDIR"/scripts/protoc.sh \
     --proto_path="$PROTOCOLDIR"/skywalking-collect \
-    --proto_path="$PROTOCOLDIR"/envoy/api \
-    --proto_path="$PROTOCOLDIR"/udpa \
+    --proto_path="$PROTOCOLDIR"/envoy \
+    --proto_path="$PROTOCOLDIR"/xds \
     --proto_path="$PROTOCOLDIR"/protoc-gen-validate \
     --proto_path="$PROTOCOLDIR"/prometheus-model \
     --proto_path="$PROTOCOLDIR" \
-    --go_opt=Mudpa/annotations/migrate.proto=github.com/cncf/xds/go/udpa/annotations \
-    --go_opt=Mudpa/annotations/status.proto=github.com/cncf/xds/go/udpa/annotations \
-    --go_opt=Mudpa/annotations/versioning.proto=github.com/cncf/xds/go/udpa/annotations \
-    --go_opt=Menvoy/api/v2/core/socket_option.proto=github.com/envoyproxy/go-control-plane/envoy/api/v2/core \
-    --go_opt=Menvoy/config/core/v3/socket_option.proto=github.com/envoyproxy/go-control-plane/envoy/config/core/v3 \
-    --go_opt=Menvoy/config/core/v3/address.proto=github.com/envoyproxy/go-control-plane/envoy/config/core/v3 \
-    --go_opt=Menvoy/config/core/v3/backoff.proto=github.com/envoyproxy/go-control-plane/envoy/config/core/v3 \
-    --go_opt=Menvoy/config/core/v3/http_uri.proto=github.com/envoyproxy/go-control-plane/config/core/v3 \
-    --go_opt=Menvoy/api/v2/core/address.proto=github.com/envoyproxy/go-control-plane/envoy/api/v2/core \
-    --go_opt=Menvoy/api/v2/core/backoff.proto=github.com/envoyproxy/go-control-plane/envoy/api/v2/core \
-    --go_opt=Menvoy/api/v2/core/http_uri.proto=github.com/envoyproxy/go-control-plane/envoy/api/v2/core \
-    --go_opt=Menvoy/type/percent.proto=github.com/envoyproxy/go-control-plane/envoy/type \
-    --go_opt=Menvoy/type/semantic_version.proto=github.com/envoyproxy/go-control-plane/envoy/type \
-    --go_opt=Menvoy/api/v2/core/base.proto=github.com/envoyproxy/go-control-plane/envoy/api/v2/core \
-    --go_opt=Menvoy/data/accesslog/v2/accesslog.proto=github.com/envoyproxy/go-control-plane/envoy/data/accesslog/v2 \
-    --go_opt=Menvoy/data/accesslog/v3/accesslog.proto=github.com/envoyproxy/go-control-plane/envoy/data/accesslog/v3 \
-    --go_opt=Menvoy/service/accesslog/v2/als.proto=github.com/envoyproxy/go-control-plane/envoy/service/accesslog/v2 \
-    --go_opt=Menvoy/service/accesslog/v3/als.proto=github.com/envoyproxy/go-control-plane/envoy/service/accesslog/v3 \
-    --go_opt=Menvoy/type/v3/percent.proto=github.com/envoyproxy/go-control-plane/envoy/type/v3 \
-    --go_opt=Menvoy/type/v3/semantic_version.proto=github.com/envoyproxy/go-control-plane/envoy/type/v3 \
-    --go_opt=Menvoy/annotations/deprecation.proto=github.com/envoyproxy/go-control-plane/envoy/annotations \
-    --go_opt=Menvoy/config/core/v3/base.proto=github.com/envoyproxy/go-control-plane/envoy/config/core/v3 \
-    --go_opt=Mxds/core/v3/context_params.proto=github.com/cncf/udpa/go/xds/core/v3 \
-    --go_opt=Menvoy/service/accesslog/v2/als.proto=github.com/envoyproxy/go-control-plane/envoy/service/accesslog/v2 \
-    --go_opt=Menvoy/service/accesslog/v3/als.proto=github.com/envoyproxy/go-control-plane/envoy/service/accesslog/v3 \
-    --go_opt=Menvoy/service/metrics/v2/metrics_service.proto=github.com/envoyproxy/go-control-plane/envoy/service/metrics/v2 \
-    --go_opt=Menvoy/service/metrics/v3/metrics_service.proto=github.com/envoyproxy/go-control-plane/envoy/service/metrics/v3 \
     --go_out="$BASEDIR" \
-    "$PROTOCOLDIR"/satellite/*.proto
+    --go-grpc_out="$BASEDIR" \
+    $(bash "$BASEDIR"/scripts/envoy-import.sh opts "$PROTOCOLDIR") \
+    "$PROTOCOLDIR"/satellite/*.proto \
+    $(bash "$BASEDIR"/scripts/envoy-import.sh files "$PROTOCOLDIR") \
 
   mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
   && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/data/v1/* "$BASEDIR"/satellite/data/v1 \
-  && rm -rf "$BASEDIR"/skywalking.apache.org
+  && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/proto/ "$BASEDIR"/ \
+  && rm -rf "$BASEDIR"/skywalking.apache.org && rm -rf $TEMPDIR
+
   go mod tidy
 }
 
 initProtocolHome
 addProtocol skywalking-collect https://github.com/apache/skywalking-data-collect-protocol/archive/"${COLLECT_PROTOCOL_SHA}".tar.gz
-addProtocol envoy https://github.com/envoyproxy/envoy/archive/"${ENVOY_SERVICE_PROTOCOL_SHA}".tar.gz
-addProtocol udpa https://github.com/cncf/udpa/archive/"${UDPA_SERVICE_PROTOCOL_SHA}".tar.gz
-addProtocol protoc-gen-validate https://github.com/envoyproxy/protoc-gen-validate/archive/${ENVOY_PROTOC_VALIDATE_SHA}.tar.gz
+addProtocol envoy https://github.com/envoyproxy/data-plane-api/archive/${ENVOY_SERVICE_PROTOCOL_SHA}.tar.gz
+addProtocol xds https://github.com/cncf/xds/archive/${XDS_SERVICE_PROTOCOL_SHA}.tar.gz
+addProtocol protoc-gen-validate https://github.com/envoyproxy/protoc-gen-validate/archive/${PROTOC_VALIDATE_SHA}.tar.gz
 addProtocol prometheus-model https://github.com/prometheus/client_model/archive/${PROMETHEUS_MODEL_SHA}.tar.gz
 cleanHistoryCodes
 prepareSatelliteProtocols
