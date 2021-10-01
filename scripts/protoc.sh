@@ -22,12 +22,13 @@ PROTOC_VERSION=3.14.0
 BASEDIR=$(dirname "$0")/..
 TEMPDIR="$BASEDIR"/temp
 BINDIR="$TEMPDIR"/bin
+INCLUDE_DIR="$TEMPDIR"/include
 
 mkdir -p "$TEMPDIR" || exit 1
 mkdir -p "$BINDIR" || exit 1
 
 if [[ -f "$BINDIR"/protoc ]]; then
-  "$BINDIR"/protoc "$@"
+  "$BINDIR"/protoc -I$INCLUDE_DIR/ "$@"
   exit $?
 fi
 
@@ -44,6 +45,7 @@ fi
 curl -sL https://github.com/protocolbuffers/protobuf/releases/download/v"$PROTOC_VERSION"/$PROTOC_ZIP -o "$TEMPDIR"/$PROTOC_ZIP
 unzip -o "$TEMPDIR"/$PROTOC_ZIP -d "$BINDIR"/.. bin/protoc > /dev/null 2>&1 || true
 unzip -o "$TEMPDIR"/$PROTOC_ZIP -d "$BINDIR"/.. bin/protoc.exe > /dev/null 2>&1 || true
+unzip -o "$TEMPDIR"/$PROTOC_ZIP -d "$BINDIR"/.. include/* > /dev/null 2>&1 || true
 
 mv "$BINDIR"/protoc.exe "$BINDIR"/protoc > /dev/null 2>&1 || true
 
@@ -51,4 +53,4 @@ chmod +x "$BINDIR"/protoc
 
 rm -f "$TEMPDIR"/$PROTOC_ZIP
 
-"$BINDIR"/protoc "$@"
+"$BINDIR"/protoc -I$INCLUDE_DIR/ "$@"

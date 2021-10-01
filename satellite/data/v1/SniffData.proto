@@ -34,6 +34,11 @@ import "service-mesh-probe/service-mesh.proto";
 import "event/Event.proto";
 import "common/Common.proto";
 
+import "envoy/service/accesslog/v2/als.proto";
+import "envoy/service/accesslog/v3/als.proto";
+import "envoy/service/metrics/v2/metrics_service.proto";
+import "envoy/service/metrics/v3/metrics_service.proto";
+
 // SniffType declares the supported transfer data type.
 enum SniffType {
   CLRMetricType = 0;
@@ -46,6 +51,10 @@ enum SniffType {
   ServiceMeshType = 7;
   EventType = 8;
   ConfigurationDiscoveryServiceType = 9;
+  EnvoyALSV2Type = 10;
+  EnvoyALSV3Type = 11;
+  EnvoyMetricsV2Type = 12;
+  EnvoyMetricsV3Type = 13;
 }
 
 // SniffData is the transfer unit in Satellite.
@@ -78,5 +87,9 @@ message SniffData {
     ProfileTaskFinishReport profileTaskFinish = 17;
     Commands commands = 18;
     ConfigurationSyncRequest configurationSyncRequest = 19;
+    envoy.service.accesslog.v2.StreamAccessLogsMessage envoyALSV2 = 20;
+    envoy.service.accesslog.v3.StreamAccessLogsMessage envoyALSV3 = 21;
+    envoy.service.metrics.v2.StreamMetricsMessage envoyMetricsV2 = 22;
+    envoy.service.metrics.v3.StreamMetricsMessage envoyMetricsV3 = 23;
   }
 }
