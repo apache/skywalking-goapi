@@ -87,9 +87,25 @@ message SniffData {
     ProfileTaskFinishReport profileTaskFinish = 17;
     Commands commands = 18;
     ConfigurationSyncRequest configurationSyncRequest = 19;
-    envoy.service.accesslog.v2.StreamAccessLogsMessage envoyALSV2 = 20;
-    envoy.service.accesslog.v3.StreamAccessLogsMessage envoyALSV3 = 21;
-    envoy.service.metrics.v2.StreamMetricsMessage envoyMetricsV2 = 22;
-    envoy.service.metrics.v3.StreamMetricsMessage envoyMetricsV3 = 23;
+    EnvoyALSV2List envoyALSV2List = 20;
+    EnvoyALSV3List envoyALSV3List = 21;
+    EnvoyMetricsV2List envoyMetricsV2List = 22;
+    EnvoyMetricsV3List envoyMetricsV3List = 23;
   }
+}
+
+message EnvoyALSV2List {
+  repeated envoy.service.accesslog.v2.StreamAccessLogsMessage messages = 1;
+}
+
+message EnvoyALSV3List {
+  repeated envoy.service.accesslog.v3.StreamAccessLogsMessage messages = 1;
+}
+
+message EnvoyMetricsV2List {
+  repeated envoy.service.metrics.v2.StreamMetricsMessage messages = 1;
+}
+
+message EnvoyMetricsV3List {
+  repeated envoy.service.metrics.v3.StreamMetricsMessage messages = 1;
 }
