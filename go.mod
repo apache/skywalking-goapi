@@ -3,9 +3,7 @@ module skywalking.apache.org/repo/goapi
 go 1.16
 
 require (
-	github.com/99designs/gqlgen v0.14.0
 	github.com/google/go-cmp v0.5.6 // indirect
-	github.com/vektah/gqlparser/v2 v2.2.0
 	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420 // indirect
 	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
 	google.golang.org/genproto v0.0.0-20210624195500-8bfb893ecb84 // indirect
