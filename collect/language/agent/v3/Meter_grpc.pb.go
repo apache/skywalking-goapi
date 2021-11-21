@@ -20,7 +20,12 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MeterReportServiceClient interface {
 	// Meter data is reported in a certain period. The agent/SDK should report all collected metrics in this period through one stream.
+	// The whole stream is an input data set, client should onComplete the stream per report period.
 	Collect(ctx context.Context, opts ...grpc.CallOption) (MeterReportService_CollectClient, error)
+	// Reporting meter data in bulk mode as MeterDataCollection.
+	// By using this, each one in the stream would be treated as a complete input for MAL engine,
+	// comparing to `collect (stream MeterData)`, which is using one stream as an input data set.
+	CollectBatch(ctx context.Context, opts ...grpc.CallOption) (MeterReportService_CollectBatchClient, error)
 }
 
 type meterReportServiceClient struct {
@@ -65,12 +70,51 @@ func (x *meterReportServiceCollectClient) CloseAndRecv() (*v3.Commands, error) {
 	return m, nil
 }
 
+func (c *meterReportServiceClient) CollectBatch(ctx context.Context, opts ...grpc.CallOption) (MeterReportService_CollectBatchClient, error) {
+	stream, err := c.cc.NewStream(ctx, &MeterReportService_ServiceDesc.Streams[1], "/skywalking.v3.MeterReportService/collectBatch", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &meterReportServiceCollectBatchClient{stream}
+	return x, nil
+}
+
+type MeterReportService_CollectBatchClient interface {
+	Send(*MeterDataCollection) error
+	CloseAndRecv() (*v3.Commands, error)
+	grpc.ClientStream
+}
+
+type meterReportServiceCollectBatchClient struct {
+	grpc.ClientStream
+}
+
+func (x *meterReportServiceCollectBatchClient) Send(m *MeterDataCollection) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *meterReportServiceCollectBatchClient) CloseAndRecv() (*v3.Commands, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(v3.Commands)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MeterReportServiceServer is the server API for MeterReportService service.
 // All implementations must embed UnimplementedMeterReportServiceServer
 // for forward compatibility
 type MeterReportServiceServer interface {
 	// Meter data is reported in a certain period. The agent/SDK should report all collected metrics in this period through one stream.
+	// The whole stream is an input data set, client should onComplete the stream per report period.
 	Collect(MeterReportService_CollectServer) error
+	// Reporting meter data in bulk mode as MeterDataCollection.
+	// By using this, each one in the stream would be treated as a complete input for MAL engine,
+	// comparing to `collect (stream MeterData)`, which is using one stream as an input data set.
+	CollectBatch(MeterReportService_CollectBatchServer) error
 	mustEmbedUnimplementedMeterReportServiceServer()
 }
 
@@ -80,6 +124,9 @@ type UnimplementedMeterReportServiceServer struct {
 
 func (UnimplementedMeterReportServiceServer) Collect(MeterReportService_CollectServer) error {
 	return status.Errorf(codes.Unimplemented, "method Collect not implemented")
+}
+func (UnimplementedMeterReportServiceServer) CollectBatch(MeterReportService_CollectBatchServer) error {
+	return status.Errorf(codes.Unimplemented, "method CollectBatch not implemented")
 }
 func (UnimplementedMeterReportServiceServer) mustEmbedUnimplementedMeterReportServiceServer() {}
 
@@ -120,6 +167,32 @@ func (x *meterReportServiceCollectServer) Recv() (*MeterData, error) {
 	return m, nil
 }
 
+func _MeterReportService_CollectBatch_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MeterReportServiceServer).CollectBatch(&meterReportServiceCollectBatchServer{stream})
+}
+
+type MeterReportService_CollectBatchServer interface {
+	SendAndClose(*v3.Commands) error
+	Recv() (*MeterDataCollection, error)
+	grpc.ServerStream
+}
+
+type meterReportServiceCollectBatchServer struct {
+	grpc.ServerStream
+}
+
+func (x *meterReportServiceCollectBatchServer) SendAndClose(m *v3.Commands) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *meterReportServiceCollectBatchServer) Recv() (*MeterDataCollection, error) {
+	m := new(MeterDataCollection)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MeterReportService_ServiceDesc is the grpc.ServiceDesc for MeterReportService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -131,6 +204,11 @@ var MeterReportService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "collect",
 			Handler:       _MeterReportService_Collect_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "collectBatch",
+			Handler:       _MeterReportService_CollectBatch_Handler,
 			ClientStreams: true,
 		},
 	},
