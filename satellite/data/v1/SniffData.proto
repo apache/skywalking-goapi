@@ -87,6 +87,7 @@ message SniffData {
     EnvoyALSV3List envoyALSV3List = 21;
     EnvoyMetricsV2List envoyMetricsV2List = 22;
     EnvoyMetricsV3List envoyMetricsV3List = 23;
+    MeterDataCollection meterCollection = 24;
   }
 }
 
