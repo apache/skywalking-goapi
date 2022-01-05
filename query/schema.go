@@ -93,14 +93,6 @@ type Call struct {
 	DetectPoints     []DetectPoint `json:"detectPoints"`
 }
 
-type ClusterBrief struct {
-	NumOfService  int `json:"numOfService"`
-	NumOfEndpoint int `json:"numOfEndpoint"`
-	NumOfDatabase int `json:"numOfDatabase"`
-	NumOfCache    int `json:"numOfCache"`
-	NumOfMq       int `json:"numOfMQ"`
-}
-
 type DashboardConfiguration struct {
 	Name          string       `json:"name"`
 	Type          TemplateType `json:"type"`
@@ -409,9 +401,11 @@ type SelectedRecord struct {
 }
 
 type Service struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Group string `json:"group"`
+	ID        string   `json:"id"`
+	Name      string   `json:"name"`
+	Group     string   `json:"group"`
+	ShortName string   `json:"shortName"`
+	Layers    []string `json:"layers"`
 }
 
 type ServiceInstance struct {
@@ -420,6 +414,7 @@ type ServiceInstance struct {
 	Attributes   []*Attribute `json:"attributes"`
 	Language     Language     `json:"language"`
 	InstanceUUID string       `json:"instanceUUID"`
+	Layer        string       `json:"layer"`
 }
 
 type ServiceInstanceNode struct {
@@ -828,49 +823,6 @@ func (e *MetricsType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MetricsType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type NodeType string
-
-const (
-	NodeTypeService  NodeType = "SERVICE"
-	NodeTypeEndpoint NodeType = "ENDPOINT"
-	NodeTypeUser     NodeType = "USER"
-)
-
-var AllNodeType = []NodeType{
-	NodeTypeService,
-	NodeTypeEndpoint,
-	NodeTypeUser,
-}
-
-func (e NodeType) IsValid() bool {
-	switch e {
-	case NodeTypeService, NodeTypeEndpoint, NodeTypeUser:
-		return true
-	}
-	return false
-}
-
-func (e NodeType) String() string {
-	return string(e)
-}
-
-func (e *NodeType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = NodeType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid NodeType", str)
-	}
-	return nil
-}
-
-func (e NodeType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
