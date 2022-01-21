@@ -406,6 +406,7 @@ type Service struct {
 	Group     string   `json:"group"`
 	ShortName string   `json:"shortName"`
 	Layers    []string `json:"layers"`
+	Normal    *bool    `json:"normal"`
 }
 
 type ServiceInstance struct {
