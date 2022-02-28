@@ -68,7 +68,8 @@ function generateCodes(){
     --proto_path="$PROTOCOLDIR"/skywalking-collect \
     --go_out="$BASEDIR" \
     --go-grpc_out="$BASEDIR" \
-    "$PROTOCOLDIR"/skywalking-collect/*/*.proto
+    "$PROTOCOLDIR"/skywalking-collect/*/*.proto \
+    "$PROTOCOLDIR"/skywalking-collect/*/*/*.proto
 
   "$BASEDIR"/scripts/protoc.sh \
     --proto_path="$PROTOCOLDIR"/skywalking-collect \
