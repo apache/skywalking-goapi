@@ -94,18 +94,13 @@ type Call struct {
 }
 
 type DashboardConfiguration struct {
-	Name          string       `json:"name"`
-	Type          TemplateType `json:"type"`
-	Configuration string       `json:"configuration"`
-	Activated     bool         `json:"activated"`
-	Disabled      bool         `json:"disabled"`
+	ID            string `json:"id"`
+	Configuration string `json:"configuration"`
 }
 
 type DashboardSetting struct {
-	Name          string       `json:"name"`
-	Type          TemplateType `json:"type"`
-	Configuration string       `json:"configuration"`
-	Active        bool         `json:"active"`
+	ID            string `json:"id"`
+	Configuration string `json:"configuration"`
 }
 
 type Database struct {
@@ -293,6 +288,10 @@ type MetricsValues struct {
 	Values *IntValues `json:"values"`
 }
 
+type NewDashboardSetting struct {
+	Configuration string `json:"configuration"`
+}
+
 type Node struct {
 	ID     string  `json:"id"`
 	Name   string  `json:"name"`
@@ -304,6 +303,19 @@ type Pagination struct {
 	PageNum   *int  `json:"pageNum"`
 	PageSize  int   `json:"pageSize"`
 	NeedTotal *bool `json:"needTotal"`
+}
+
+type Process struct {
+	ID           string       `json:"id"`
+	Name         string       `json:"name"`
+	ServiceID    string       `json:"serviceId"`
+	ServiceName  string       `json:"serviceName"`
+	InstanceID   string       `json:"instanceId"`
+	InstanceName string       `json:"instanceName"`
+	Layer        string       `json:"layer"`
+	AgentID      string       `json:"agentId"`
+	DetectType   string       `json:"detectType"`
+	Attributes   []*Attribute `json:"attributes"`
 }
 
 type ProfileAnalyzation struct {
@@ -470,6 +482,7 @@ type SpanTag struct {
 }
 
 type TemplateChangeStatus struct {
+	ID      string  `json:"id"`
 	Status  bool    `json:"status"`
 	Message *string `json:"message"`
 }
@@ -1084,57 +1097,6 @@ func (e *Step) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Step) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type TemplateType string
-
-const (
-	TemplateTypeDashboard                       TemplateType = "DASHBOARD"
-	TemplateTypeTopologyService                 TemplateType = "TOPOLOGY_SERVICE"
-	TemplateTypeTopologyInstance                TemplateType = "TOPOLOGY_INSTANCE"
-	TemplateTypeTopologyEndpoint                TemplateType = "TOPOLOGY_ENDPOINT"
-	TemplateTypeTopologyServiceRelation         TemplateType = "TOPOLOGY_SERVICE_RELATION"
-	TemplateTypeTopologyServiceInstanceRelation TemplateType = "TOPOLOGY_SERVICE_INSTANCE_RELATION"
-	TemplateTypeTopologyEndpointRelation        TemplateType = "TOPOLOGY_ENDPOINT_RELATION"
-)
-
-var AllTemplateType = []TemplateType{
-	TemplateTypeDashboard,
-	TemplateTypeTopologyService,
-	TemplateTypeTopologyInstance,
-	TemplateTypeTopologyEndpoint,
-	TemplateTypeTopologyServiceRelation,
-	TemplateTypeTopologyServiceInstanceRelation,
-	TemplateTypeTopologyEndpointRelation,
-}
-
-func (e TemplateType) IsValid() bool {
-	switch e {
-	case TemplateTypeDashboard, TemplateTypeTopologyService, TemplateTypeTopologyInstance, TemplateTypeTopologyEndpoint, TemplateTypeTopologyServiceRelation, TemplateTypeTopologyServiceInstanceRelation, TemplateTypeTopologyEndpointRelation:
-		return true
-	}
-	return false
-}
-
-func (e TemplateType) String() string {
-	return string(e)
-}
-
-func (e *TemplateType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = TemplateType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid TemplateType", str)
-	}
-	return nil
-}
-
-func (e TemplateType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
