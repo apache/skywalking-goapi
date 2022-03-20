@@ -115,6 +115,77 @@ type Duration struct {
 	Step  Step   `json:"step"`
 }
 
+type EBPFProfilingAnalyzation struct {
+	Tip   *string              `json:"tip"`
+	Trees []*EBPFProfilingTree `json:"trees"`
+}
+
+type EBPFProfilingAnalyzeTimeRange struct {
+	Start int64 `json:"start"`
+	End   int64 `json:"end"`
+}
+
+type EBPFProfilingProcessFinder struct {
+	FinderType EBPFProfilingProcessFinderType `json:"finderType"`
+	ProcessID  *string                        `json:"processId"`
+}
+
+type EBPFProfilingSchedule struct {
+	ScheduleID string `json:"scheduleId"`
+	TaskID     string `json:"taskId"`
+	ProcessID  string `json:"processId"`
+	StartTime  int64  `json:"startTime"`
+	EndTime    int64  `json:"endTime"`
+}
+
+type EBPFProfilingStackElement struct {
+	ID        string                 `json:"id"`
+	ParentID  string                 `json:"parentId"`
+	Symbol    string                 `json:"symbol"`
+	StackType EBPFProfilingStackType `json:"stackType"`
+	DumpCount int64                  `json:"dumpCount"`
+}
+
+type EBPFProfilingTask struct {
+	TaskID               string                         `json:"taskId"`
+	ProcessFinderType    EBPFProfilingProcessFinderType `json:"processFinderType"`
+	ServiceID            *string                        `json:"serviceId"`
+	ServiceName          *string                        `json:"serviceName"`
+	InstanceID           *string                        `json:"instanceId"`
+	InstanceName         *string                        `json:"instanceName"`
+	ProcessID            *string                        `json:"processId"`
+	ProcessName          *string                        `json:"processName"`
+	TaskStartTime        int64                          `json:"taskStartTime"`
+	TriggerType          EBPFProfilingTriggerType       `json:"triggerType"`
+	FixedTriggerDuration *int64                         `json:"fixedTriggerDuration"`
+	TargetType           EBPFProfilingTargetType        `json:"targetType"`
+	CreateTime           int64                          `json:"createTime"`
+}
+
+type EBPFProfilingTaskCondition struct {
+	FinderType *EBPFProfilingProcessFinderType `json:"finderType"`
+	ServiceID  *string                         `json:"serviceId"`
+	InstanceID *string                         `json:"instanceId"`
+	ProcessID  *string                         `json:"processId"`
+}
+
+type EBPFProfilingTaskCreationResult struct {
+	Status      bool    `json:"status"`
+	ErrorReason *string `json:"errorReason"`
+	ID          *string `json:"id"`
+}
+
+type EBPFProfilingTaskFixedTimeCreationRequest struct {
+	ProcessFinder *EBPFProfilingProcessFinder `json:"processFinder"`
+	StartTime     int64                       `json:"startTime"`
+	Duration      int                         `json:"duration"`
+	TargetType    EBPFProfilingTargetType     `json:"targetType"`
+}
+
+type EBPFProfilingTree struct {
+	Elements []*EBPFProfilingStackElement `json:"elements"`
+}
+
 type Endpoint struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -643,6 +714,164 @@ func (e *DetectPoint) UnmarshalGQL(v interface{}) error {
 }
 
 func (e DetectPoint) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EBPFProfilingProcessFinderType string
+
+const (
+	EBPFProfilingProcessFinderTypeProcessID EBPFProfilingProcessFinderType = "PROCESS_ID"
+)
+
+var AllEBPFProfilingProcessFinderType = []EBPFProfilingProcessFinderType{
+	EBPFProfilingProcessFinderTypeProcessID,
+}
+
+func (e EBPFProfilingProcessFinderType) IsValid() bool {
+	switch e {
+	case EBPFProfilingProcessFinderTypeProcessID:
+		return true
+	}
+	return false
+}
+
+func (e EBPFProfilingProcessFinderType) String() string {
+	return string(e)
+}
+
+func (e *EBPFProfilingProcessFinderType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EBPFProfilingProcessFinderType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EBPFProfilingProcessFinderType", str)
+	}
+	return nil
+}
+
+func (e EBPFProfilingProcessFinderType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EBPFProfilingStackType string
+
+const (
+	EBPFProfilingStackTypeKernelSpace EBPFProfilingStackType = "KERNEL_SPACE"
+	EBPFProfilingStackTypeUserSpace   EBPFProfilingStackType = "USER_SPACE"
+)
+
+var AllEBPFProfilingStackType = []EBPFProfilingStackType{
+	EBPFProfilingStackTypeKernelSpace,
+	EBPFProfilingStackTypeUserSpace,
+}
+
+func (e EBPFProfilingStackType) IsValid() bool {
+	switch e {
+	case EBPFProfilingStackTypeKernelSpace, EBPFProfilingStackTypeUserSpace:
+		return true
+	}
+	return false
+}
+
+func (e EBPFProfilingStackType) String() string {
+	return string(e)
+}
+
+func (e *EBPFProfilingStackType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EBPFProfilingStackType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EBPFProfilingStackType", str)
+	}
+	return nil
+}
+
+func (e EBPFProfilingStackType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EBPFProfilingTargetType string
+
+const (
+	EBPFProfilingTargetTypeOnCPU EBPFProfilingTargetType = "ON_CPU"
+)
+
+var AllEBPFProfilingTargetType = []EBPFProfilingTargetType{
+	EBPFProfilingTargetTypeOnCPU,
+}
+
+func (e EBPFProfilingTargetType) IsValid() bool {
+	switch e {
+	case EBPFProfilingTargetTypeOnCPU:
+		return true
+	}
+	return false
+}
+
+func (e EBPFProfilingTargetType) String() string {
+	return string(e)
+}
+
+func (e *EBPFProfilingTargetType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EBPFProfilingTargetType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EBPFProfilingTargetType", str)
+	}
+	return nil
+}
+
+func (e EBPFProfilingTargetType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EBPFProfilingTriggerType string
+
+const (
+	EBPFProfilingTriggerTypeFixedTime EBPFProfilingTriggerType = "FIXED_TIME"
+)
+
+var AllEBPFProfilingTriggerType = []EBPFProfilingTriggerType{
+	EBPFProfilingTriggerTypeFixedTime,
+}
+
+func (e EBPFProfilingTriggerType) IsValid() bool {
+	switch e {
+	case EBPFProfilingTriggerTypeFixedTime:
+		return true
+	}
+	return false
+}
+
+func (e EBPFProfilingTriggerType) String() string {
+	return string(e)
+}
+
+func (e *EBPFProfilingTriggerType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EBPFProfilingTriggerType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EBPFProfilingTriggerType", str)
+	}
+	return nil
+}
+
+func (e EBPFProfilingTriggerType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
