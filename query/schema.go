@@ -131,11 +131,11 @@ type EBPFProfilingProcessFinder struct {
 }
 
 type EBPFProfilingSchedule struct {
-	ScheduleID string `json:"scheduleId"`
-	TaskID     string `json:"taskId"`
-	ProcessID  string `json:"processId"`
-	StartTime  int64  `json:"startTime"`
-	EndTime    int64  `json:"endTime"`
+	ScheduleID string   `json:"scheduleId"`
+	TaskID     string   `json:"taskId"`
+	Process    *Process `json:"process"`
+	StartTime  int64    `json:"startTime"`
+	EndTime    int64    `json:"endTime"`
 }
 
 type EBPFProfilingStackElement struct {
