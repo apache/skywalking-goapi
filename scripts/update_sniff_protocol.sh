@@ -44,8 +44,6 @@ function addProtocol(){
   fi
 
   tar -zxf "$PROTOCOLDIR"/$name.tgz -C "$PROTOCOLDIR"/$name --strip 1
-
-  find "$PROTOCOLDIR"/$name -regex ".*[cC]ompat.proto" -exec rm {} \;
 }
 
 function cleanHistoryCodes(){
