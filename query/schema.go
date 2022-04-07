@@ -125,11 +125,6 @@ type EBPFProfilingAnalyzeTimeRange struct {
 	End   int64 `json:"end"`
 }
 
-type EBPFProfilingProcessFinder struct {
-	FinderType EBPFProfilingProcessFinderType `json:"finderType"`
-	ProcessID  *string                        `json:"processId"`
-}
-
 type EBPFProfilingSchedule struct {
 	ScheduleID string   `json:"scheduleId"`
 	TaskID     string   `json:"taskId"`
@@ -147,26 +142,15 @@ type EBPFProfilingStackElement struct {
 }
 
 type EBPFProfilingTask struct {
-	TaskID               string                         `json:"taskId"`
-	ProcessFinderType    EBPFProfilingProcessFinderType `json:"processFinderType"`
-	ServiceID            *string                        `json:"serviceId"`
-	ServiceName          *string                        `json:"serviceName"`
-	InstanceID           *string                        `json:"instanceId"`
-	InstanceName         *string                        `json:"instanceName"`
-	ProcessID            *string                        `json:"processId"`
-	ProcessName          *string                        `json:"processName"`
-	TaskStartTime        int64                          `json:"taskStartTime"`
-	TriggerType          EBPFProfilingTriggerType       `json:"triggerType"`
-	FixedTriggerDuration *int64                         `json:"fixedTriggerDuration"`
-	TargetType           EBPFProfilingTargetType        `json:"targetType"`
-	CreateTime           int64                          `json:"createTime"`
-}
-
-type EBPFProfilingTaskCondition struct {
-	FinderType *EBPFProfilingProcessFinderType `json:"finderType"`
-	ServiceID  *string                         `json:"serviceId"`
-	InstanceID *string                         `json:"instanceId"`
-	ProcessID  *string                         `json:"processId"`
+	TaskID               string                   `json:"taskId"`
+	ServiceID            string                   `json:"serviceId"`
+	ServiceName          string                   `json:"serviceName"`
+	ProcessLabels        []string                 `json:"processLabels"`
+	TaskStartTime        int64                    `json:"taskStartTime"`
+	TriggerType          EBPFProfilingTriggerType `json:"triggerType"`
+	FixedTriggerDuration *int64                   `json:"fixedTriggerDuration"`
+	TargetType           EBPFProfilingTargetType  `json:"targetType"`
+	CreateTime           int64                    `json:"createTime"`
 }
 
 type EBPFProfilingTaskCreationResult struct {
@@ -176,10 +160,16 @@ type EBPFProfilingTaskCreationResult struct {
 }
 
 type EBPFProfilingTaskFixedTimeCreationRequest struct {
-	ProcessFinder *EBPFProfilingProcessFinder `json:"processFinder"`
-	StartTime     int64                       `json:"startTime"`
-	Duration      int                         `json:"duration"`
-	TargetType    EBPFProfilingTargetType     `json:"targetType"`
+	ServiceID     string                  `json:"serviceId"`
+	ProcessLabels []string                `json:"processLabels"`
+	StartTime     int64                   `json:"startTime"`
+	Duration      int                     `json:"duration"`
+	TargetType    EBPFProfilingTargetType `json:"targetType"`
+}
+
+type EBPFProfilingTaskPrepare struct {
+	CouldProfiling bool     `json:"couldProfiling"`
+	ProcessLabels  []string `json:"processLabels"`
 }
 
 type EBPFProfilingTree struct {
@@ -387,6 +377,7 @@ type Process struct {
 	AgentID      string       `json:"agentId"`
 	DetectType   string       `json:"detectType"`
 	Attributes   []*Attribute `json:"attributes"`
+	Labels       []string     `json:"labels"`
 }
 
 type ProfileAnalyzation struct {
@@ -714,45 +705,6 @@ func (e *DetectPoint) UnmarshalGQL(v interface{}) error {
 }
 
 func (e DetectPoint) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type EBPFProfilingProcessFinderType string
-
-const (
-	EBPFProfilingProcessFinderTypeProcessID EBPFProfilingProcessFinderType = "PROCESS_ID"
-)
-
-var AllEBPFProfilingProcessFinderType = []EBPFProfilingProcessFinderType{
-	EBPFProfilingProcessFinderTypeProcessID,
-}
-
-func (e EBPFProfilingProcessFinderType) IsValid() bool {
-	switch e {
-	case EBPFProfilingProcessFinderTypeProcessID:
-		return true
-	}
-	return false
-}
-
-func (e EBPFProfilingProcessFinderType) String() string {
-	return string(e)
-}
-
-func (e *EBPFProfilingProcessFinderType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = EBPFProfilingProcessFinderType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid EBPFProfilingProcessFinderType", str)
-	}
-	return nil
-}
-
-func (e EBPFProfilingProcessFinderType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
