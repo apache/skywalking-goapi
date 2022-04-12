@@ -223,6 +223,7 @@ type Event struct {
 	Parameters []*KeyValue `json:"parameters"`
 	StartTime  int64       `json:"startTime"`
 	EndTime    *int64      `json:"endTime"`
+	Layer      string      `json:"layer"`
 }
 
 type EventQueryCondition struct {
@@ -232,6 +233,7 @@ type EventQueryCondition struct {
 	Type   *EventType   `json:"type"`
 	Time   *Duration    `json:"time"`
 	Order  *Order       `json:"order"`
+	Layer  *string      `json:"layer"`
 	Paging *Pagination  `json:"paging"`
 }
 
