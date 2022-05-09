@@ -31,6 +31,8 @@ import "profile/Profile.proto";
 import "service-mesh-probe/service-mesh.proto";
 import "event/Event.proto";
 import "common/Common.proto";
+import "ebpf/profiling/Process.proto";
+import "ebpf/profiling/Profile.proto";
 
 import "envoy/service/metrics/v2/metrics_service.proto";
 import "envoy/service/metrics/v3/metrics_service.proto";
@@ -51,6 +53,8 @@ enum SniffType {
   EnvoyALSV3Type = 11;
   EnvoyMetricsV2Type = 12;
   EnvoyMetricsV3Type = 13;
+  EBPFProcessType = 14;
+  EBPFProfilingType = 15;
 }
 
 // SniffData is the transfer unit in Satellite.
@@ -88,6 +92,11 @@ message SniffData {
     EnvoyMetricsV2List envoyMetricsV2List = 22;
     EnvoyMetricsV3List envoyMetricsV3List = 23;
     MeterDataCollection meterCollection = 24;
+    EBPFProcessReportList eBPFProcessReportList = 25;
+    EBPFReportProcessDownstream eBPFReportProcessDownstream = 26;
+    EBPFProcessPingPkgList eBPFProcessPingPkgList = 27;
+    EBPFProfilingTaskQuery eBPFProfilingTaskQuery = 28;
+    EBPFProfilingData eBPFProfilingData = 29;
   }
 }
 
