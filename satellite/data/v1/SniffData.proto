@@ -96,7 +96,7 @@ message SniffData {
     EBPFReportProcessDownstream eBPFReportProcessDownstream = 26;
     EBPFProcessPingPkgList eBPFProcessPingPkgList = 27;
     EBPFProfilingTaskQuery eBPFProfilingTaskQuery = 28;
-    EBPFProfilingData eBPFProfilingData = 29;
+    EBPFProfilingDataList eBPFProfilingDataList = 29;
   }
 }
 
@@ -114,4 +114,8 @@ message EnvoyMetricsV2List {
 
 message EnvoyMetricsV3List {
   repeated envoy.service.metrics.v3.StreamMetricsMessage messages = 1;
+}
+
+message EBPFProfilingDataList {
+  repeated EBPFProfilingData dataList = 1;
 }
