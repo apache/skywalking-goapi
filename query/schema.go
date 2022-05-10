@@ -375,7 +375,6 @@ type Process struct {
 	ServiceName  string       `json:"serviceName"`
 	InstanceID   string       `json:"instanceId"`
 	InstanceName string       `json:"instanceName"`
-	Layer        string       `json:"layer"`
 	AgentID      string       `json:"agentId"`
 	DetectType   string       `json:"detectType"`
 	Attributes   []*Attribute `json:"attributes"`
@@ -491,7 +490,6 @@ type ServiceInstance struct {
 	Attributes   []*Attribute `json:"attributes"`
 	Language     Language     `json:"language"`
 	InstanceUUID string       `json:"instanceUUID"`
-	Layer        string       `json:"layer"`
 }
 
 type ServiceInstanceNode struct {
