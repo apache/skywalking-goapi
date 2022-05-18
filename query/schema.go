@@ -708,6 +708,47 @@ func (e DetectPoint) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type EBPFProfilingAnalyzeAggregateType string
+
+const (
+	EBPFProfilingAnalyzeAggregateTypeDuration EBPFProfilingAnalyzeAggregateType = "DURATION"
+	EBPFProfilingAnalyzeAggregateTypeCount    EBPFProfilingAnalyzeAggregateType = "COUNT"
+)
+
+var AllEBPFProfilingAnalyzeAggregateType = []EBPFProfilingAnalyzeAggregateType{
+	EBPFProfilingAnalyzeAggregateTypeDuration,
+	EBPFProfilingAnalyzeAggregateTypeCount,
+}
+
+func (e EBPFProfilingAnalyzeAggregateType) IsValid() bool {
+	switch e {
+	case EBPFProfilingAnalyzeAggregateTypeDuration, EBPFProfilingAnalyzeAggregateTypeCount:
+		return true
+	}
+	return false
+}
+
+func (e EBPFProfilingAnalyzeAggregateType) String() string {
+	return string(e)
+}
+
+func (e *EBPFProfilingAnalyzeAggregateType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EBPFProfilingAnalyzeAggregateType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EBPFProfilingAnalyzeAggregateType", str)
+	}
+	return nil
+}
+
+func (e EBPFProfilingAnalyzeAggregateType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type EBPFProfilingStackType string
 
 const (
@@ -752,16 +793,18 @@ func (e EBPFProfilingStackType) MarshalGQL(w io.Writer) {
 type EBPFProfilingTargetType string
 
 const (
-	EBPFProfilingTargetTypeOnCPU EBPFProfilingTargetType = "ON_CPU"
+	EBPFProfilingTargetTypeOnCPU  EBPFProfilingTargetType = "ON_CPU"
+	EBPFProfilingTargetTypeOffCPU EBPFProfilingTargetType = "OFF_CPU"
 )
 
 var AllEBPFProfilingTargetType = []EBPFProfilingTargetType{
 	EBPFProfilingTargetTypeOnCPU,
+	EBPFProfilingTargetTypeOffCPU,
 }
 
 func (e EBPFProfilingTargetType) IsValid() bool {
 	switch e {
-	case EBPFProfilingTargetTypeOnCPU:
+	case EBPFProfilingTargetTypeOnCPU, EBPFProfilingTargetTypeOffCPU:
 		return true
 	}
 	return false
