@@ -326,8 +326,7 @@ type LogTestResponse struct {
 }
 
 type Logs struct {
-	Logs  []*Log `json:"logs"`
-	Total int    `json:"total"`
+	Logs []*Log `json:"logs"`
 }
 
 type MetricCondition struct {
@@ -363,9 +362,8 @@ type Node struct {
 }
 
 type Pagination struct {
-	PageNum   *int  `json:"pageNum"`
-	PageSize  int   `json:"pageSize"`
-	NeedTotal *bool `json:"needTotal"`
+	PageNum  *int `json:"pageNum"`
+	PageSize int  `json:"pageSize"`
 }
 
 type Process struct {
@@ -599,7 +597,6 @@ type Trace struct {
 
 type TraceBrief struct {
 	Traces []*BasicTrace `json:"traces"`
-	Total  int           `json:"total"`
 }
 
 type TraceQueryCondition struct {
