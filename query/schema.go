@@ -27,8 +27,7 @@ type AlarmTrend struct {
 }
 
 type Alarms struct {
-	Msgs  []*AlarmMessage `json:"msgs"`
-	Total int             `json:"total"`
+	Msgs []*AlarmMessage `json:"msgs"`
 }
 
 type Attribute struct {
@@ -75,8 +74,7 @@ type BrowserErrorLogQueryCondition struct {
 }
 
 type BrowserErrorLogs struct {
-	Logs  []*BrowserErrorLog `json:"logs"`
-	Total int                `json:"total"`
+	Logs []*BrowserErrorLog `json:"logs"`
 }
 
 type Bucket struct {
@@ -239,7 +237,6 @@ type EventQueryCondition struct {
 
 type Events struct {
 	Events []*Event `json:"events"`
-	Total  int      `json:"total"`
 }
 
 type HealthStatus struct {
