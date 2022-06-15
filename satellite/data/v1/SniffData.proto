@@ -77,7 +77,7 @@ message SniffData {
     JVMMetricCollection jvm = 7;
     MeterData meter = 8;
     bytes segment = 9;
-    bytes log = 10;
+    BatchLogList logList = 10;
     InstanceProperties instance = 11;
     ThreadSnapshot profile = 12;
     ServiceMeshMetric serviceMesh = 13;
@@ -98,6 +98,10 @@ message SniffData {
     EBPFProfilingTaskQuery eBPFProfilingTaskQuery = 28;
     EBPFProfilingDataList eBPFProfilingDataList = 29;
   }
+}
+
+message BatchLogList {
+  repeated bytes logs = 1;
 }
 
 message EnvoyALSV2List {
