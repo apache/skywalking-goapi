@@ -113,6 +113,11 @@ type Duration struct {
 	Step  Step   `json:"step"`
 }
 
+type EBPFNetworkKeepProfilingResult struct {
+	Status      bool    `json:"status"`
+	ErrorReason *string `json:"errorReason"`
+}
+
 type EBPFProfilingAnalyzation struct {
 	Tip   *string              `json:"tip"`
 	Trees []*EBPFProfilingTree `json:"trees"`
@@ -121,6 +126,10 @@ type EBPFProfilingAnalyzation struct {
 type EBPFProfilingAnalyzeTimeRange struct {
 	Start int64 `json:"start"`
 	End   int64 `json:"end"`
+}
+
+type EBPFProfilingNetworkTaskRequest struct {
+	InstanceID string `json:"instanceId"`
 }
 
 type EBPFProfilingSchedule struct {
@@ -143,6 +152,8 @@ type EBPFProfilingTask struct {
 	TaskID               string                   `json:"taskId"`
 	ServiceID            string                   `json:"serviceId"`
 	ServiceName          string                   `json:"serviceName"`
+	ServiceInstanceID    *string                  `json:"serviceInstanceId"`
+	ServiceInstanceName  *string                  `json:"serviceInstanceName"`
 	ProcessLabels        []string                 `json:"processLabels"`
 	TaskStartTime        int64                    `json:"taskStartTime"`
 	TriggerType          EBPFProfilingTriggerType `json:"triggerType"`
@@ -206,10 +217,12 @@ type Entity struct {
 	Normal                  *bool   `json:"normal"`
 	ServiceInstanceName     *string `json:"serviceInstanceName"`
 	EndpointName            *string `json:"endpointName"`
+	ProcessName             *string `json:"processName"`
 	DestServiceName         *string `json:"destServiceName"`
 	DestNormal              *bool   `json:"destNormal"`
 	DestServiceInstanceName *string `json:"destServiceInstanceName"`
 	DestEndpointName        *string `json:"destEndpointName"`
+	DestProcessName         *string `json:"destProcessName"`
 }
 
 type Event struct {
@@ -323,7 +336,8 @@ type LogTestResponse struct {
 }
 
 type Logs struct {
-	Logs []*Log `json:"logs"`
+	ErrorReason *string `json:"errorReason"`
+	Logs        []*Log  `json:"logs"`
 }
 
 type MetricCondition struct {
@@ -358,9 +372,26 @@ type Node struct {
 	IsReal bool    `json:"isReal"`
 }
 
+type OndemandContainergQueryCondition struct {
+	ServiceInstanceID *string `json:"serviceInstanceId"`
+}
+
+type OndemandLogQueryCondition struct {
+	ServiceInstanceID          *string   `json:"serviceInstanceId"`
+	Container                  string    `json:"container"`
+	Duration                   *Duration `json:"duration"`
+	KeywordsOfContent          []string  `json:"keywordsOfContent"`
+	ExcludingKeywordsOfContent []string  `json:"excludingKeywordsOfContent"`
+}
+
 type Pagination struct {
 	PageNum  *int `json:"pageNum"`
 	PageSize int  `json:"pageSize"`
+}
+
+type PodContainers struct {
+	ErrorReason *string  `json:"errorReason"`
+	Containers  []string `json:"containers"`
 }
 
 type Process struct {
@@ -374,6 +405,21 @@ type Process struct {
 	DetectType   string       `json:"detectType"`
 	Attributes   []*Attribute `json:"attributes"`
 	Labels       []string     `json:"labels"`
+}
+
+type ProcessNode struct {
+	ID                  string `json:"id"`
+	ServiceID           string `json:"serviceId"`
+	ServiceName         string `json:"serviceName"`
+	ServiceInstanceID   string `json:"serviceInstanceId"`
+	ServiceInstanceName string `json:"serviceInstanceName"`
+	Name                string `json:"name"`
+	IsReal              bool   `json:"isReal"`
+}
+
+type ProcessTopology struct {
+	Nodes []*ProcessNode `json:"nodes"`
+	Calls []*Call        `json:"calls"`
 }
 
 type ProfileAnalyzation struct {
@@ -787,18 +833,20 @@ func (e EBPFProfilingStackType) MarshalGQL(w io.Writer) {
 type EBPFProfilingTargetType string
 
 const (
-	EBPFProfilingTargetTypeOnCPU  EBPFProfilingTargetType = "ON_CPU"
-	EBPFProfilingTargetTypeOffCPU EBPFProfilingTargetType = "OFF_CPU"
+	EBPFProfilingTargetTypeOnCPU   EBPFProfilingTargetType = "ON_CPU"
+	EBPFProfilingTargetTypeOffCPU  EBPFProfilingTargetType = "OFF_CPU"
+	EBPFProfilingTargetTypeNetwork EBPFProfilingTargetType = "NETWORK"
 )
 
 var AllEBPFProfilingTargetType = []EBPFProfilingTargetType{
 	EBPFProfilingTargetTypeOnCPU,
 	EBPFProfilingTargetTypeOffCPU,
+	EBPFProfilingTargetTypeNetwork,
 }
 
 func (e EBPFProfilingTargetType) IsValid() bool {
 	switch e {
-	case EBPFProfilingTargetTypeOnCPU, EBPFProfilingTargetTypeOffCPU:
+	case EBPFProfilingTargetTypeOnCPU, EBPFProfilingTargetTypeOffCPU, EBPFProfilingTargetTypeNetwork:
 		return true
 	}
 	return false
@@ -1232,6 +1280,7 @@ const (
 	ScopeServiceRelation         Scope = "ServiceRelation"
 	ScopeServiceInstanceRelation Scope = "ServiceInstanceRelation"
 	ScopeEndpointRelation        Scope = "EndpointRelation"
+	ScopeProcessRelation         Scope = "ProcessRelation"
 )
 
 var AllScope = []Scope{
@@ -1242,11 +1291,12 @@ var AllScope = []Scope{
 	ScopeServiceRelation,
 	ScopeServiceInstanceRelation,
 	ScopeEndpointRelation,
+	ScopeProcessRelation,
 }
 
 func (e Scope) IsValid() bool {
 	switch e {
-	case ScopeAll, ScopeService, ScopeServiceInstance, ScopeEndpoint, ScopeServiceRelation, ScopeServiceInstanceRelation, ScopeEndpointRelation:
+	case ScopeAll, ScopeService, ScopeServiceInstance, ScopeEndpoint, ScopeServiceRelation, ScopeServiceInstanceRelation, ScopeEndpointRelation, ScopeProcessRelation:
 		return true
 	}
 	return false
