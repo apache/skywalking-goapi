@@ -68,3 +68,8 @@ proto xds udpa/annotations/status.proto
 proto xds udpa/annotations/versioning.proto
 proto xds xds/core/v3/context_params.proto
 proto xds udpa/annotations/sensitive.proto
+
+proto opentelementry opentelemetry/proto/collector/metrics/v1/metrics_service.proto
+proto opentelementry opentelemetry/proto/metrics/v1/metrics.proto
+proto opentelementry opentelemetry/proto/common/v1/common.proto
+proto opentelementry opentelemetry/proto/resource/v1/resource.proto
