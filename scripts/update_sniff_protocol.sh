@@ -70,17 +70,19 @@ function generateCodes(){
     "$PROTOCOLDIR"/skywalking-collect/*/*/*.proto
 
   "$BASEDIR"/scripts/protoc.sh \
+    --experimental_allow_proto3_optional \
     --proto_path="$PROTOCOLDIR"/skywalking-collect \
     --proto_path="$PROTOCOLDIR"/envoy \
     --proto_path="$PROTOCOLDIR"/xds \
     --proto_path="$PROTOCOLDIR"/protoc-gen-validate \
     --proto_path="$PROTOCOLDIR"/prometheus-model \
+    --proto_path="$PROTOCOLDIR"/opentelementry \
     --proto_path="$PROTOCOLDIR" \
     --go_out="$BASEDIR" \
     --go-grpc_out="$BASEDIR" \
-    $(bash "$BASEDIR"/scripts/envoy-import.sh opts "$PROTOCOLDIR") \
+    $(bash "$BASEDIR"/scripts/third-proto-import.sh opts "$PROTOCOLDIR") \
     "$PROTOCOLDIR"/satellite/*.proto \
-    $(bash "$BASEDIR"/scripts/envoy-import.sh files "$PROTOCOLDIR") \
+    $(bash "$BASEDIR"/scripts/third-proto-import.sh files "$PROTOCOLDIR")
 
   mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
   && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/data/v1/* "$BASEDIR"/satellite/data/v1 \
@@ -97,6 +99,8 @@ addProtocol envoy https://github.com/envoyproxy/data-plane-api/archive/${ENVOY_S
 addProtocol xds https://github.com/cncf/xds/archive/${XDS_SERVICE_PROTOCOL_SHA}.tar.gz
 addProtocol protoc-gen-validate https://github.com/envoyproxy/protoc-gen-validate/archive/${PROTOC_VALIDATE_SHA}.tar.gz
 addProtocol prometheus-model https://github.com/prometheus/client_model/archive/${PROMETHEUS_MODEL_SHA}.tar.gz
+addProtocol opentelementry https://github.com/open-telemetry/opentelemetry-proto/archive/${OPENTELEMETRY_MODEL_SHA}.tar.gz
+
 cleanHistoryCodes
 prepareSatelliteProtocols
 generateCodes
