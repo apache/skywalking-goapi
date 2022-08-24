@@ -80,9 +80,9 @@ function generateCodes(){
     --proto_path="$PROTOCOLDIR" \
     --go_out="$BASEDIR" \
     --go-grpc_out="$BASEDIR" \
-    $(bash "$BASEDIR"/scripts/envoy-import.sh opts "$PROTOCOLDIR") \
+    $(bash "$BASEDIR"/scripts/third-proto-import.sh opts "$PROTOCOLDIR") \
     "$PROTOCOLDIR"/satellite/*.proto \
-    $(bash "$BASEDIR"/scripts/envoy-import.sh files "$PROTOCOLDIR")
+    $(bash "$BASEDIR"/scripts/third-proto-import.sh files "$PROTOCOLDIR")
 
   mv "$BASEDIR"/skywalking.apache.org/repo/goapi/collect "$BASEDIR"/ \
   && mv "$BASEDIR"/skywalking.apache.org/repo/goapi/satellite/data/v1/* "$BASEDIR"/satellite/data/v1 \
