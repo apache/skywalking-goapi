@@ -186,3 +186,126 @@ var TraceSegmentReportService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "language-agent/Tracing.proto",
 }
+
+// SpanAttachedEventReportServiceClient is the client API for SpanAttachedEventReportService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SpanAttachedEventReportServiceClient interface {
+	// Collect SpanAttachedEvent to the OAP server in the streaming mode.
+	Collect(ctx context.Context, opts ...grpc.CallOption) (SpanAttachedEventReportService_CollectClient, error)
+}
+
+type spanAttachedEventReportServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSpanAttachedEventReportServiceClient(cc grpc.ClientConnInterface) SpanAttachedEventReportServiceClient {
+	return &spanAttachedEventReportServiceClient{cc}
+}
+
+func (c *spanAttachedEventReportServiceClient) Collect(ctx context.Context, opts ...grpc.CallOption) (SpanAttachedEventReportService_CollectClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SpanAttachedEventReportService_ServiceDesc.Streams[0], "/skywalking.v3.SpanAttachedEventReportService/collect", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &spanAttachedEventReportServiceCollectClient{stream}
+	return x, nil
+}
+
+type SpanAttachedEventReportService_CollectClient interface {
+	Send(*SpanAttachedEvent) error
+	CloseAndRecv() (*v3.Commands, error)
+	grpc.ClientStream
+}
+
+type spanAttachedEventReportServiceCollectClient struct {
+	grpc.ClientStream
+}
+
+func (x *spanAttachedEventReportServiceCollectClient) Send(m *SpanAttachedEvent) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *spanAttachedEventReportServiceCollectClient) CloseAndRecv() (*v3.Commands, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(v3.Commands)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// SpanAttachedEventReportServiceServer is the server API for SpanAttachedEventReportService service.
+// All implementations must embed UnimplementedSpanAttachedEventReportServiceServer
+// for forward compatibility
+type SpanAttachedEventReportServiceServer interface {
+	// Collect SpanAttachedEvent to the OAP server in the streaming mode.
+	Collect(SpanAttachedEventReportService_CollectServer) error
+	mustEmbedUnimplementedSpanAttachedEventReportServiceServer()
+}
+
+// UnimplementedSpanAttachedEventReportServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedSpanAttachedEventReportServiceServer struct {
+}
+
+func (UnimplementedSpanAttachedEventReportServiceServer) Collect(SpanAttachedEventReportService_CollectServer) error {
+	return status.Errorf(codes.Unimplemented, "method Collect not implemented")
+}
+func (UnimplementedSpanAttachedEventReportServiceServer) mustEmbedUnimplementedSpanAttachedEventReportServiceServer() {
+}
+
+// UnsafeSpanAttachedEventReportServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SpanAttachedEventReportServiceServer will
+// result in compilation errors.
+type UnsafeSpanAttachedEventReportServiceServer interface {
+	mustEmbedUnimplementedSpanAttachedEventReportServiceServer()
+}
+
+func RegisterSpanAttachedEventReportServiceServer(s grpc.ServiceRegistrar, srv SpanAttachedEventReportServiceServer) {
+	s.RegisterService(&SpanAttachedEventReportService_ServiceDesc, srv)
+}
+
+func _SpanAttachedEventReportService_Collect_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SpanAttachedEventReportServiceServer).Collect(&spanAttachedEventReportServiceCollectServer{stream})
+}
+
+type SpanAttachedEventReportService_CollectServer interface {
+	SendAndClose(*v3.Commands) error
+	Recv() (*SpanAttachedEvent, error)
+	grpc.ServerStream
+}
+
+type spanAttachedEventReportServiceCollectServer struct {
+	grpc.ServerStream
+}
+
+func (x *spanAttachedEventReportServiceCollectServer) SendAndClose(m *v3.Commands) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *spanAttachedEventReportServiceCollectServer) Recv() (*SpanAttachedEvent, error) {
+	m := new(SpanAttachedEvent)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// SpanAttachedEventReportService_ServiceDesc is the grpc.ServiceDesc for SpanAttachedEventReportService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SpanAttachedEventReportService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "skywalking.v3.SpanAttachedEventReportService",
+	HandlerType: (*SpanAttachedEventReportServiceServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "collect",
+			Handler:       _SpanAttachedEventReportService_Collect_Handler,
+			ClientStreams: true,
+		},
+	},
+	Metadata: "language-agent/Tracing.proto",
+}
