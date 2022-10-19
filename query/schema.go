@@ -267,12 +267,22 @@ type HeatMapColumn struct {
 	Values []int64 `json:"values"`
 }
 
+type Instant struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int   `json:"nanos"`
+}
+
 type IntValues struct {
 	Values []*KVInt `json:"values"`
 }
 
 type KVInt struct {
 	ID    string `json:"id"`
+	Value int64  `json:"value"`
+}
+
+type KeyNumericValue struct {
+	Key   string `json:"key"`
 	Value int64  `json:"value"`
 }
 
@@ -502,6 +512,20 @@ type ProfiledSpan struct {
 	Logs                []*LogEntity `json:"logs"`
 }
 
+type Record struct {
+	Name  string  `json:"name"`
+	ID    string  `json:"id"`
+	Value *string `json:"value,omitempty"`
+	RefID *string `json:"refId,omitempty"`
+}
+
+type RecordCondition struct {
+	Name         string  `json:"name"`
+	ParentEntity *Entity `json:"parentEntity,omitempty"`
+	TopN         int     `json:"topN"`
+	Order        Order   `json:"order"`
+}
+
 type Ref struct {
 	TraceID         string  `json:"traceId"`
 	ParentSegmentID string  `json:"parentSegmentId"`
@@ -560,23 +584,32 @@ type SourceInput struct {
 }
 
 type Span struct {
-	TraceID             string       `json:"traceId"`
-	SegmentID           string       `json:"segmentId"`
-	SpanID              int          `json:"spanId"`
-	ParentSpanID        int          `json:"parentSpanId"`
-	Refs                []*Ref       `json:"refs"`
-	ServiceCode         string       `json:"serviceCode"`
-	ServiceInstanceName string       `json:"serviceInstanceName"`
-	StartTime           int64        `json:"startTime"`
-	EndTime             int64        `json:"endTime"`
-	EndpointName        *string      `json:"endpointName,omitempty"`
-	Type                string       `json:"type"`
-	Peer                *string      `json:"peer,omitempty"`
-	Component           *string      `json:"component,omitempty"`
-	IsError             *bool        `json:"isError,omitempty"`
-	Layer               *string      `json:"layer,omitempty"`
-	Tags                []*KeyValue  `json:"tags"`
-	Logs                []*LogEntity `json:"logs"`
+	TraceID             string               `json:"traceId"`
+	SegmentID           string               `json:"segmentId"`
+	SpanID              int                  `json:"spanId"`
+	ParentSpanID        int                  `json:"parentSpanId"`
+	Refs                []*Ref               `json:"refs"`
+	ServiceCode         string               `json:"serviceCode"`
+	ServiceInstanceName string               `json:"serviceInstanceName"`
+	StartTime           int64                `json:"startTime"`
+	EndTime             int64                `json:"endTime"`
+	EndpointName        *string              `json:"endpointName,omitempty"`
+	Type                string               `json:"type"`
+	Peer                *string              `json:"peer,omitempty"`
+	Component           *string              `json:"component,omitempty"`
+	IsError             *bool                `json:"isError,omitempty"`
+	Layer               *string              `json:"layer,omitempty"`
+	Tags                []*KeyValue          `json:"tags"`
+	Logs                []*LogEntity         `json:"logs"`
+	AttachedEvents      []*SpanAttachedEvent `json:"attachedEvents"`
+}
+
+type SpanAttachedEvent struct {
+	StartTime *Instant           `json:"startTime,omitempty"`
+	Event     string             `json:"event"`
+	EndTime   *Instant           `json:"endTime,omitempty"`
+	Tags      []*KeyValue        `json:"tags"`
+	Summary   []*KeyNumericValue `json:"summary"`
 }
 
 type SpanTag struct {
