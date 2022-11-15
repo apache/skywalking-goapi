@@ -101,6 +101,7 @@ message SniffData {
     EBPFProfilingTaskQuery eBPFProfilingTaskQuery = 28;
     EBPFProfilingDataList eBPFProfilingDataList = 29;
     opentelemetry.proto.collector.metrics.v1.ExportMetricsServiceRequest openTelementryMetricsV1Request = 30;
+    bytes spanAttachedEvent = 31;
   }
 }
 
