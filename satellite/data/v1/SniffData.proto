@@ -30,7 +30,7 @@ import "management/Management.proto";
 import "profile/Profile.proto";
 import "service-mesh-probe/service-mesh.proto";
 import "event/Event.proto";
-import "common/Common.proto";
+import "common/Command.proto";
 import "ebpf/profiling/Process.proto";
 import "ebpf/profiling/Profile.proto";
 
@@ -83,7 +83,7 @@ message SniffData {
     BatchLogList logList = 10;
     InstanceProperties instance = 11;
     ThreadSnapshot profile = 12;
-    ServiceMeshMetric serviceMesh = 13;
+    ServiceMeshMetrics serviceMesh = 13;
     Event event = 14;
     InstancePingPkg instancePing = 15;
     ProfileTaskCommandQuery profileTaskQuery = 16;

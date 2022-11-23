@@ -39,7 +39,7 @@ func (c *serviceMeshMetricServiceClient) Collect(ctx context.Context, opts ...gr
 }
 
 type ServiceMeshMetricService_CollectClient interface {
-	Send(*ServiceMeshMetric) error
+	Send(*ServiceMeshMetrics) error
 	CloseAndRecv() (*MeshProbeDownstream, error)
 	grpc.ClientStream
 }
@@ -48,7 +48,7 @@ type serviceMeshMetricServiceCollectClient struct {
 	grpc.ClientStream
 }
 
-func (x *serviceMeshMetricServiceCollectClient) Send(m *ServiceMeshMetric) error {
+func (x *serviceMeshMetricServiceCollectClient) Send(m *ServiceMeshMetrics) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -98,7 +98,7 @@ func _ServiceMeshMetricService_Collect_Handler(srv interface{}, stream grpc.Serv
 
 type ServiceMeshMetricService_CollectServer interface {
 	SendAndClose(*MeshProbeDownstream) error
-	Recv() (*ServiceMeshMetric, error)
+	Recv() (*ServiceMeshMetrics, error)
 	grpc.ServerStream
 }
 
@@ -110,8 +110,8 @@ func (x *serviceMeshMetricServiceCollectServer) SendAndClose(m *MeshProbeDownstr
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *serviceMeshMetricServiceCollectServer) Recv() (*ServiceMeshMetric, error) {
-	m := new(ServiceMeshMetric)
+func (x *serviceMeshMetricServiceCollectServer) Recv() (*ServiceMeshMetrics, error) {
+	m := new(ServiceMeshMetrics)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

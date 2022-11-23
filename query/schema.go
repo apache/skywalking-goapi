@@ -113,9 +113,24 @@ type Duration struct {
 	Step  Step   `json:"step"`
 }
 
+type EBPFNetworkDataCollectingSettings struct {
+	RequireCompleteRequest  bool `json:"requireCompleteRequest"`
+	MaxRequestSize          *int `json:"maxRequestSize,omitempty"`
+	RequireCompleteResponse bool `json:"requireCompleteResponse"`
+	MaxResponseSize         *int `json:"maxResponseSize,omitempty"`
+}
+
 type EBPFNetworkKeepProfilingResult struct {
 	Status      bool    `json:"status"`
 	ErrorReason *string `json:"errorReason,omitempty"`
+}
+
+type EBPFNetworkSamplingRule struct {
+	URIRegex    *string                            `json:"uriRegex,omitempty"`
+	MinDuration *int                               `json:"minDuration,omitempty"`
+	When4xx     bool                               `json:"when4xx"`
+	When5xx     bool                               `json:"when5xx"`
+	Settings    *EBPFNetworkDataCollectingSettings `json:"settings,omitempty"`
 }
 
 type EBPFProfilingAnalyzation struct {
@@ -129,7 +144,8 @@ type EBPFProfilingAnalyzeTimeRange struct {
 }
 
 type EBPFProfilingNetworkTaskRequest struct {
-	InstanceID string `json:"instanceId"`
+	InstanceID string                     `json:"instanceId"`
+	Samplings  []*EBPFNetworkSamplingRule `json:"samplings"`
 }
 
 type EBPFProfilingSchedule struct {
