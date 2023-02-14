@@ -258,9 +258,10 @@ func (SpanAttachedEvent_SpanReferenceType) EnumDescriptor() ([]byte, []int) {
 
 // The segment is a collection of spans. It includes all collected spans in a simple one request context, such as a HTTP request process.
 //
-// We recommend the agent/SDK report all tracked data of one request once for all, such as,
-// typically, such as in Java, one segment represent all tracked operations(spans) of one request context in the same thread.
-// At the same time, in some language there is not a clear concept like golang, it could represent all tracked operations of one request context.
+// We recommend the agent/SDK report all tracked data of one request once for all.
+// Typically, such as in Java, one segment represent all tracked operations(spans) of one request context in the same thread.
+// At the same time, in some language there is not a clear `thread` concept like golang.
+// Then, it could represent all tracked operations of one request context cross threads/goroutines.
 type SegmentObject struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
