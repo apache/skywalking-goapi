@@ -91,6 +91,62 @@ type Call struct {
 	DetectPoints     []DetectPoint `json:"detectPoints"`
 }
 
+type ContinuousProfilingPolicyCreation struct {
+	ServiceID string                                     `json:"serviceId"`
+	Targets   []*ContinuousProfilingPolicyTargetCreation `json:"targets"`
+}
+
+type ContinuousProfilingPolicyItem struct {
+	Type      ContinuousProfilingMonitorType `json:"type"`
+	Threshold string                         `json:"threshold"`
+	Period    int                            `json:"period"`
+	Count     int                            `json:"count"`
+	URIList   []string                       `json:"uriList"`
+	URIRegex  *string                        `json:"uriRegex,omitempty"`
+}
+
+type ContinuousProfilingPolicyItemCreation struct {
+	Type      ContinuousProfilingMonitorType `json:"type"`
+	Threshold string                         `json:"threshold"`
+	Period    int                            `json:"period"`
+	Count     int                            `json:"count"`
+	URIList   []string                       `json:"uriList"`
+	URIRegex  *string                        `json:"uriRegex,omitempty"`
+}
+
+type ContinuousProfilingPolicyTarget struct {
+	Type       ContinuousProfilingTargetType    `json:"type"`
+	CheckItems []*ContinuousProfilingPolicyItem `json:"checkItems"`
+}
+
+type ContinuousProfilingPolicyTargetCreation struct {
+	TargetType ContinuousProfilingTargetType            `json:"targetType"`
+	CheckItems []*ContinuousProfilingPolicyItemCreation `json:"checkItems"`
+}
+
+type ContinuousProfilingSetResult struct {
+	Status      bool    `json:"status"`
+	ErrorReason *string `json:"errorReason,omitempty"`
+}
+
+type ContinuousProfilingSingleValueCause struct {
+	Threshold int64 `json:"threshold"`
+	Current   int64 `json:"current"`
+}
+
+type ContinuousProfilingTriggeredCause struct {
+	Type        ContinuousProfilingMonitorType       `json:"type"`
+	SingleValue *ContinuousProfilingSingleValueCause `json:"singleValue,omitempty"`
+	URI         *ContinuousProfilingURICause         `json:"uri,omitempty"`
+}
+
+type ContinuousProfilingURICause struct {
+	URIRegex  *string `json:"uriRegex,omitempty"`
+	URIPath   *string `json:"uriPath,omitempty"`
+	Threshold int64   `json:"threshold"`
+	Current   int64   `json:"current"`
+}
+
 type DashboardConfiguration struct {
 	ID            string `json:"id"`
 	Configuration string `json:"configuration"`
@@ -165,17 +221,20 @@ type EBPFProfilingStackElement struct {
 }
 
 type EBPFProfilingTask struct {
-	TaskID               string                   `json:"taskId"`
-	ServiceID            string                   `json:"serviceId"`
-	ServiceName          string                   `json:"serviceName"`
-	ServiceInstanceID    *string                  `json:"serviceInstanceId,omitempty"`
-	ServiceInstanceName  *string                  `json:"serviceInstanceName,omitempty"`
-	ProcessLabels        []string                 `json:"processLabels"`
-	TaskStartTime        int64                    `json:"taskStartTime"`
-	TriggerType          EBPFProfilingTriggerType `json:"triggerType"`
-	FixedTriggerDuration *int64                   `json:"fixedTriggerDuration,omitempty"`
-	TargetType           EBPFProfilingTargetType  `json:"targetType"`
-	CreateTime           int64                    `json:"createTime"`
+	TaskID                    string                               `json:"taskId"`
+	ServiceID                 string                               `json:"serviceId"`
+	ServiceName               string                               `json:"serviceName"`
+	ServiceInstanceID         *string                              `json:"serviceInstanceId,omitempty"`
+	ServiceInstanceName       *string                              `json:"serviceInstanceName,omitempty"`
+	ProcessLabels             []string                             `json:"processLabels"`
+	ProcessID                 *string                              `json:"processId,omitempty"`
+	ProcessName               *string                              `json:"processName,omitempty"`
+	TaskStartTime             int64                                `json:"taskStartTime"`
+	TriggerType               EBPFProfilingTriggerType             `json:"triggerType"`
+	FixedTriggerDuration      *int64                               `json:"fixedTriggerDuration,omitempty"`
+	ContinuousProfilingCauses []*ContinuousProfilingTriggeredCause `json:"continuousProfilingCauses"`
+	TargetType                EBPFProfilingTargetType              `json:"targetType"`
+	CreateTime                int64                                `json:"createTime"`
 }
 
 type EBPFProfilingTaskCreationResult struct {
@@ -228,7 +287,7 @@ type EndpointTopology struct {
 }
 
 type Entity struct {
-	Scope                   Scope   `json:"scope"`
+	Scope                   *Scope  `json:"scope,omitempty"`
 	ServiceName             *string `json:"serviceName,omitempty"`
 	Normal                  *bool   `json:"normal,omitempty"`
 	ServiceInstanceName     *string `json:"serviceInstanceName,omitempty"`
@@ -754,6 +813,96 @@ func (e ContentType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ContinuousProfilingMonitorType string
+
+const (
+	ContinuousProfilingMonitorTypeProcessCPU          ContinuousProfilingMonitorType = "PROCESS_CPU"
+	ContinuousProfilingMonitorTypeProcessThreadCount  ContinuousProfilingMonitorType = "PROCESS_THREAD_COUNT"
+	ContinuousProfilingMonitorTypeSystemLoad          ContinuousProfilingMonitorType = "SYSTEM_LOAD"
+	ContinuousProfilingMonitorTypeHTTPErrorRate       ContinuousProfilingMonitorType = "HTTP_ERROR_RATE"
+	ContinuousProfilingMonitorTypeHTTPAvgResponseTime ContinuousProfilingMonitorType = "HTTP_AVG_RESPONSE_TIME"
+)
+
+var AllContinuousProfilingMonitorType = []ContinuousProfilingMonitorType{
+	ContinuousProfilingMonitorTypeProcessCPU,
+	ContinuousProfilingMonitorTypeProcessThreadCount,
+	ContinuousProfilingMonitorTypeSystemLoad,
+	ContinuousProfilingMonitorTypeHTTPErrorRate,
+	ContinuousProfilingMonitorTypeHTTPAvgResponseTime,
+}
+
+func (e ContinuousProfilingMonitorType) IsValid() bool {
+	switch e {
+	case ContinuousProfilingMonitorTypeProcessCPU, ContinuousProfilingMonitorTypeProcessThreadCount, ContinuousProfilingMonitorTypeSystemLoad, ContinuousProfilingMonitorTypeHTTPErrorRate, ContinuousProfilingMonitorTypeHTTPAvgResponseTime:
+		return true
+	}
+	return false
+}
+
+func (e ContinuousProfilingMonitorType) String() string {
+	return string(e)
+}
+
+func (e *ContinuousProfilingMonitorType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContinuousProfilingMonitorType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContinuousProfilingMonitorType", str)
+	}
+	return nil
+}
+
+func (e ContinuousProfilingMonitorType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ContinuousProfilingTargetType string
+
+const (
+	ContinuousProfilingTargetTypeOnCPU   ContinuousProfilingTargetType = "ON_CPU"
+	ContinuousProfilingTargetTypeOffCPU  ContinuousProfilingTargetType = "OFF_CPU"
+	ContinuousProfilingTargetTypeNetwork ContinuousProfilingTargetType = "NETWORK"
+)
+
+var AllContinuousProfilingTargetType = []ContinuousProfilingTargetType{
+	ContinuousProfilingTargetTypeOnCPU,
+	ContinuousProfilingTargetTypeOffCPU,
+	ContinuousProfilingTargetTypeNetwork,
+}
+
+func (e ContinuousProfilingTargetType) IsValid() bool {
+	switch e {
+	case ContinuousProfilingTargetTypeOnCPU, ContinuousProfilingTargetTypeOffCPU, ContinuousProfilingTargetTypeNetwork:
+		return true
+	}
+	return false
+}
+
+func (e ContinuousProfilingTargetType) String() string {
+	return string(e)
+}
+
+func (e *ContinuousProfilingTargetType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContinuousProfilingTargetType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContinuousProfilingTargetType", str)
+	}
+	return nil
+}
+
+func (e ContinuousProfilingTargetType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type DetectPoint string
 
 const (
@@ -925,16 +1074,18 @@ func (e EBPFProfilingTargetType) MarshalGQL(w io.Writer) {
 type EBPFProfilingTriggerType string
 
 const (
-	EBPFProfilingTriggerTypeFixedTime EBPFProfilingTriggerType = "FIXED_TIME"
+	EBPFProfilingTriggerTypeFixedTime           EBPFProfilingTriggerType = "FIXED_TIME"
+	EBPFProfilingTriggerTypeContinuousProfiling EBPFProfilingTriggerType = "CONTINUOUS_PROFILING"
 )
 
 var AllEBPFProfilingTriggerType = []EBPFProfilingTriggerType{
 	EBPFProfilingTriggerTypeFixedTime,
+	EBPFProfilingTriggerTypeContinuousProfiling,
 }
 
 func (e EBPFProfilingTriggerType) IsValid() bool {
 	switch e {
-	case EBPFProfilingTriggerTypeFixedTime:
+	case EBPFProfilingTriggerTypeFixedTime, EBPFProfilingTriggerTypeContinuousProfiling:
 		return true
 	}
 	return false
@@ -1326,6 +1477,7 @@ const (
 	ScopeService                 Scope = "Service"
 	ScopeServiceInstance         Scope = "ServiceInstance"
 	ScopeEndpoint                Scope = "Endpoint"
+	ScopeProcess                 Scope = "Process"
 	ScopeServiceRelation         Scope = "ServiceRelation"
 	ScopeServiceInstanceRelation Scope = "ServiceInstanceRelation"
 	ScopeEndpointRelation        Scope = "EndpointRelation"
@@ -1337,6 +1489,7 @@ var AllScope = []Scope{
 	ScopeService,
 	ScopeServiceInstance,
 	ScopeEndpoint,
+	ScopeProcess,
 	ScopeServiceRelation,
 	ScopeServiceInstanceRelation,
 	ScopeEndpointRelation,
@@ -1345,7 +1498,7 @@ var AllScope = []Scope{
 
 func (e Scope) IsValid() bool {
 	switch e {
-	case ScopeAll, ScopeService, ScopeServiceInstance, ScopeEndpoint, ScopeServiceRelation, ScopeServiceInstanceRelation, ScopeEndpointRelation, ScopeProcessRelation:
+	case ScopeAll, ScopeService, ScopeServiceInstance, ScopeEndpoint, ScopeProcess, ScopeServiceRelation, ScopeServiceInstanceRelation, ScopeEndpointRelation, ScopeProcessRelation:
 		return true
 	}
 	return false
