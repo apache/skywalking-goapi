@@ -352,8 +352,9 @@ type IntValues struct {
 }
 
 type KVInt struct {
-	ID    string `json:"id"`
-	Value int64  `json:"value"`
+	ID           string `json:"id"`
+	Value        int64  `json:"value"`
+	IsEmptyValue bool   `json:"isEmptyValue"`
 }
 
 type KeyNumericValue struct {
@@ -573,6 +574,8 @@ type ProfiledSegment struct {
 type ProfiledSpan struct {
 	SpanID              int          `json:"spanId"`
 	ParentSpanID        int          `json:"parentSpanId"`
+	SegmentID           string       `json:"segmentId"`
+	Refs                []*Ref       `json:"refs"`
 	ServiceCode         string       `json:"serviceCode"`
 	ServiceInstanceName string       `json:"serviceInstanceName"`
 	StartTime           int64        `json:"startTime"`
@@ -585,6 +588,17 @@ type ProfiledSpan struct {
 	Layer               *string      `json:"layer,omitempty"`
 	Tags                []*KeyValue  `json:"tags"`
 	Logs                []*LogEntity `json:"logs"`
+	Profiled            bool         `json:"profiled"`
+}
+
+type ProfiledTraceSegments struct {
+	TraceID       string          `json:"traceId"`
+	InstanceID    string          `json:"instanceId"`
+	InstanceName  string          `json:"instanceName"`
+	EndpointNames []string        `json:"endpointNames"`
+	Duration      int             `json:"duration"`
+	Start         string          `json:"start"`
+	Spans         []*ProfiledSpan `json:"spans"`
 }
 
 type Record struct {
@@ -606,6 +620,11 @@ type Ref struct {
 	ParentSegmentID string  `json:"parentSegmentId"`
 	ParentSpanID    int     `json:"parentSpanId"`
 	Type            RefType `json:"type"`
+}
+
+type SegmentProfileAnalyzeQuery struct {
+	SegmentID string                   `json:"segmentId"`
+	TimeRange *ProfileAnalyzeTimeRange `json:"timeRange,omitempty"`
 }
 
 type SelectedRecord struct {
