@@ -458,6 +458,11 @@ type Node struct {
 	IsReal bool    `json:"isReal"`
 }
 
+type NullableValue struct {
+	Value        int64 `json:"value"`
+	IsEmptyValue bool  `json:"isEmptyValue"`
+}
+
 type OndemandContainergQueryCondition struct {
 	ServiceInstanceID *string `json:"serviceInstanceId,omitempty"`
 }
