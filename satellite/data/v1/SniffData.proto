@@ -58,6 +58,7 @@ enum SniffType {
   EBPFProcessType = 14;
   EBPFProfilingType = 15;
   OpenTelementryMetricsV1Type = 16;
+  SpanAttachedEventType = 17;
 }
 
 // SniffData is the transfer unit in Satellite.
