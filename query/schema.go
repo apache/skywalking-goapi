@@ -91,6 +91,24 @@ type Call struct {
 	DetectPoints     []DetectPoint `json:"detectPoints"`
 }
 
+type ContinuousProfilingMonitoringInstance struct {
+	ID                   string                                  `json:"id"`
+	Name                 string                                  `json:"name"`
+	Attributes           []*Attribute                            `json:"attributes"`
+	TriggeredCount       int                                     `json:"triggeredCount"`
+	LastTriggerTimestamp *int64                                  `json:"lastTriggerTimestamp,omitempty"`
+	Processes            []*ContinuousProfilingMonitoringProcess `json:"processes"`
+}
+
+type ContinuousProfilingMonitoringProcess struct {
+	ID                   string   `json:"id"`
+	Name                 string   `json:"name"`
+	DetectType           string   `json:"detectType"`
+	Labels               []string `json:"labels"`
+	TriggeredCount       int      `json:"triggeredCount"`
+	LastTriggerTimestamp *int64   `json:"lastTriggerTimestamp,omitempty"`
+}
+
 type ContinuousProfilingPolicyCreation struct {
 	ServiceID string                                     `json:"serviceId"`
 	Targets   []*ContinuousProfilingPolicyTargetCreation `json:"targets"`
@@ -115,8 +133,10 @@ type ContinuousProfilingPolicyItemCreation struct {
 }
 
 type ContinuousProfilingPolicyTarget struct {
-	Type       ContinuousProfilingTargetType    `json:"type"`
-	CheckItems []*ContinuousProfilingPolicyItem `json:"checkItems"`
+	Type                 ContinuousProfilingTargetType    `json:"type"`
+	CheckItems           []*ContinuousProfilingPolicyItem `json:"checkItems"`
+	TriggeredCount       int                              `json:"triggeredCount"`
+	LastTriggerTimestamp *int64                           `json:"lastTriggerTimestamp,omitempty"`
 }
 
 type ContinuousProfilingPolicyTargetCreation struct {
@@ -327,6 +347,12 @@ type Events struct {
 	Events []*Event `json:"events"`
 }
 
+type ExpressionResult struct {
+	Type    ExpressionResultType `json:"type"`
+	Results []*MQEValues         `json:"results"`
+	Error   *string              `json:"error,omitempty"`
+}
+
 type HealthStatus struct {
 	Score   int     `json:"score"`
 	Details *string `json:"details,omitempty"`
@@ -424,6 +450,22 @@ type LogTestResponse struct {
 type Logs struct {
 	ErrorReason *string `json:"errorReason,omitempty"`
 	Logs        []*Log  `json:"logs"`
+}
+
+type MQEValue struct {
+	ID      *string `json:"id,omitempty"`
+	Value   *string `json:"value,omitempty"`
+	TraceID *string `json:"traceID,omitempty"`
+}
+
+type MQEValues struct {
+	Metric *Metadata   `json:"metric,omitempty"`
+	Values []*MQEValue `json:"values"`
+}
+
+type Metadata struct {
+	Name   string      `json:"name"`
+	Labels []*KeyValue `json:"labels"`
 }
 
 type MetricCondition struct {
@@ -1225,6 +1267,53 @@ func (e *EventType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e EventType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExpressionResultType string
+
+const (
+	ExpressionResultTypeUnknown          ExpressionResultType = "UNKNOWN"
+	ExpressionResultTypeSingleValue      ExpressionResultType = "SINGLE_VALUE"
+	ExpressionResultTypeTimeSeriesValues ExpressionResultType = "TIME_SERIES_VALUES"
+	ExpressionResultTypeSortedList       ExpressionResultType = "SORTED_LIST"
+	ExpressionResultTypeRecordList       ExpressionResultType = "RECORD_LIST"
+)
+
+var AllExpressionResultType = []ExpressionResultType{
+	ExpressionResultTypeUnknown,
+	ExpressionResultTypeSingleValue,
+	ExpressionResultTypeTimeSeriesValues,
+	ExpressionResultTypeSortedList,
+	ExpressionResultTypeRecordList,
+}
+
+func (e ExpressionResultType) IsValid() bool {
+	switch e {
+	case ExpressionResultTypeUnknown, ExpressionResultTypeSingleValue, ExpressionResultTypeTimeSeriesValues, ExpressionResultTypeSortedList, ExpressionResultTypeRecordList:
+		return true
+	}
+	return false
+}
+
+func (e ExpressionResultType) String() string {
+	return string(e)
+}
+
+func (e *ExpressionResultType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExpressionResultType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExpressionResultType", str)
+	}
+	return nil
+}
+
+func (e ExpressionResultType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
