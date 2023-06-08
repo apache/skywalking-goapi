@@ -464,7 +464,6 @@ type MQEValues struct {
 }
 
 type Metadata struct {
-	Name   string      `json:"name"`
 	Labels []*KeyValue `json:"labels"`
 }
 
