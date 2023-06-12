@@ -158,6 +158,7 @@ type ContinuousProfilingTriggeredCause struct {
 	Type        ContinuousProfilingMonitorType       `json:"type"`
 	SingleValue *ContinuousProfilingSingleValueCause `json:"singleValue,omitempty"`
 	URI         *ContinuousProfilingURICause         `json:"uri,omitempty"`
+	Message     string                               `json:"message"`
 }
 
 type ContinuousProfilingURICause struct {
