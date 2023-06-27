@@ -464,6 +464,14 @@ type MQEValues struct {
 	Values []*MQEValue `json:"values"`
 }
 
+type MenuItem struct {
+	Name     string      `json:"name"`
+	Icon     *string     `json:"icon,omitempty"`
+	Path     string      `json:"path"`
+	Activate bool        `json:"activate"`
+	SubItems []*MenuItem `json:"subItems"`
+}
+
 type Metadata struct {
 	Labels []*KeyValue `json:"labels"`
 }
