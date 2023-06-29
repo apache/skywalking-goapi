@@ -465,9 +465,9 @@ type MQEValues struct {
 }
 
 type MenuItem struct {
-	Name     string      `json:"name"`
+	Title    string      `json:"title"`
 	Icon     *string     `json:"icon,omitempty"`
-	Path     string      `json:"path"`
+	Layer    string      `json:"layer"`
 	Activate bool        `json:"activate"`
 	SubItems []*MenuItem `json:"subItems"`
 }
