@@ -465,13 +465,13 @@ type MQEValues struct {
 }
 
 type MenuItem struct {
-	Title       string      `json:"title"`
-	Icon        *string     `json:"icon,omitempty"`
-	Layer       string      `json:"layer"`
-	Activate    bool        `json:"activate"`
-	SubItems    []*MenuItem `json:"subItems"`
-	Description *string     `json:"description,omitempty"`
-	Link        *string     `json:"link,omitempty"`
+	Title        string      `json:"title"`
+	Icon         *string     `json:"icon,omitempty"`
+	Layer        string      `json:"layer"`
+	Activate     bool        `json:"activate"`
+	SubItems     []*MenuItem `json:"subItems"`
+	Description  *string     `json:"description,omitempty"`
+	DocumentLink *string     `json:"documentLink,omitempty"`
 }
 
 type Metadata struct {
