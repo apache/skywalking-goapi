@@ -472,6 +472,7 @@ type MenuItem struct {
 	SubItems     []*MenuItem `json:"subItems"`
 	Description  *string     `json:"description,omitempty"`
 	DocumentLink *string     `json:"documentLink,omitempty"`
+	I18nKey      *string     `json:"i18nKey,omitempty"`
 }
 
 type Metadata struct {
