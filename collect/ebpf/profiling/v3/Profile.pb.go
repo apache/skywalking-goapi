@@ -151,7 +151,6 @@ type EBPFProfilingData struct {
 	// profiling data
 	//
 	// Types that are assignable to Profiling:
-	//
 	//	*EBPFProfilingData_OnCPU
 	//	*EBPFProfilingData_OffCPU
 	Profiling isEBPFProfilingData_Profiling `protobuf_oneof:"profiling"`

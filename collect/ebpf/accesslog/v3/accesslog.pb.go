@@ -653,7 +653,6 @@ type ConnectionAddress struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Address:
-	//
 	//	*ConnectionAddress_Kubernetes
 	//	*ConnectionAddress_Ip
 	Address isConnectionAddress_Address `protobuf_oneof:"address"`
@@ -870,7 +869,6 @@ type AccessLogKernelLog struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Operation:
-	//
 	//	*AccessLogKernelLog_Connect
 	//	*AccessLogKernelLog_Close
 	//	*AccessLogKernelLog_Read
@@ -979,7 +977,6 @@ type AccessLogProtocolLogs struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Protocol:
-	//
 	//	*AccessLogProtocolLogs_Http
 	Protocol isAccessLogProtocolLogs_Protocol `protobuf_oneof:"protocol"`
 }
@@ -2194,7 +2191,6 @@ type EBPFTimestamp struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Timestamp:
-	//
 	//	*EBPFTimestamp_Offset
 	Timestamp isEBPFTimestamp_Timestamp `protobuf_oneof:"timestamp"`
 }

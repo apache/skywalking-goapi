@@ -160,7 +160,6 @@ type SniffData struct {
 	// Transfer data.
 	//
 	// Types that are assignable to Data:
-	//
 	//	*SniffData_Clr
 	//	*SniffData_Jvm
 	//	*SniffData_Meter

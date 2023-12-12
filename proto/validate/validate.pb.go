@@ -94,7 +94,6 @@ type FieldRules struct {
 
 	Message *MessageRules `protobuf:"bytes,17,opt,name=message" json:"message,omitempty"`
 	// Types that are assignable to Type:
-	//
 	//	*FieldRules_Float
 	//	*FieldRules_Double
 	//	*FieldRules_Int32
@@ -2001,7 +2000,6 @@ type StringRules struct {
 	// patterns
 	//
 	// Types that are assignable to WellKnown:
-	//
 	//	*StringRules_Email
 	//	*StringRules_Hostname
 	//	*StringRules_Ip
@@ -2373,7 +2371,6 @@ type BytesRules struct {
 	// patterns
 	//
 	// Types that are assignable to WellKnown:
-	//
 	//	*BytesRules_Ip
 	//	*BytesRules_Ipv4
 	//	*BytesRules_Ipv6

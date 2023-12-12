@@ -44,73 +44,68 @@ const (
 // The available commands are,
 // Name: ConfigurationDiscoveryCommand
 // Args:
-//
-//	SerialNumber: String
-//	UUID: String
-//	properties: Key-value pairs rely on agent-side implementations
+//     SerialNumber: String
+//     UUID: String
+//     properties: Key-value pairs rely on agent-side implementations
 //
 // Ref, Java agent supported configurations, https://skywalking.apache.org/docs/skywalking-java/next/en/setup/service-agent/java-agent/configuration-discovery/
 //
 // Name: ProfileTaskQuery
 // Args:
-//
-//	SerialNumber: String
-//	TaskId: String
-//	EndpointName: String
-//	Duration: Integer
-//	MinDurationThreshold: Integer
-//	DumpPeriod: Integer
-//	MaxSamplingCount: Integer
-//	StartTime: Date Timestamp
-//	CreateTime: Date Timestamp
+//     SerialNumber: String
+//     TaskId: String
+//     EndpointName: String
+//     Duration: Integer
+//     MinDurationThreshold: Integer
+//     DumpPeriod: Integer
+//     MaxSamplingCount: Integer
+//     StartTime: Date Timestamp
+//     CreateTime: Date Timestamp
 //
 // Name: EBPFProfilingTaskQuery
 // Args:
-//
-//	TaskId: String
-//	ProcessId: Integer List
-//	TaskUpdateTime: Date timestamp
-//	TriggerType: Enum, value = FIXED_TIME
-//	TargetType: Enum, value = ON_CPU, OFF_CPU or NETWORK
-//	TaskStartTime: Date Timestamp
-//	ExtensionConfigJSON: JSON serialization of NetworkSamplings.
-//	    --- NetworkSamplings ---
-//	    NetworkSamplings: List
-//	        URIRegex: String
-//	        MinDuration: Integer
-//	        When4xx: Boolean
-//	        When5xx: Boolean
-//	        Settings: Object
-//	            RequireCompleteRequest: Boolean
-//	            MaxRequestSize: Integer
-//	            RequireCompleteResponse: Boolean
-//	            MaxResponseSize: Integer
-//	    ------------------------
-//	FixedTriggerDuration: Long
+//     TaskId: String
+//     ProcessId: Integer List
+//     TaskUpdateTime: Date timestamp
+//     TriggerType: Enum, value = FIXED_TIME
+//     TargetType: Enum, value = ON_CPU, OFF_CPU or NETWORK
+//     TaskStartTime: Date Timestamp
+//     ExtensionConfigJSON: JSON serialization of NetworkSamplings.
+//         --- NetworkSamplings ---
+//         NetworkSamplings: List
+//             URIRegex: String
+//             MinDuration: Integer
+//             When4xx: Boolean
+//             When5xx: Boolean
+//             Settings: Object
+//                 RequireCompleteRequest: Boolean
+//                 MaxRequestSize: Integer
+//                 RequireCompleteResponse: Boolean
+//                 MaxResponseSize: Integer
+//         ------------------------
+//     FixedTriggerDuration: Long
 //
 // Name: ContinuousProfilingPolicyQuery
 // Args:
-//
-//	ServiceWithPolicyJSON: List JSON serialization of ServiceWithPolicy.
-//	    --- ServiceWithPolicy ---
-//	    ServiceName: String
-//	    UUID: String
-//	    Profiling: Multiple profiling configuration. Map
-//	        Key: Profiling type. Enum, value = ON_CPU, OFF_CPU, NETWORK
-//	        Value: Profiling policies. Map
-//	            Key: Monitoring type. Enum, value = PROCESS_CPU, PROCESS_THREAD_COUNT, SYSTEM_LOAD, HTTP_ERROR_RATE, HTTP_AVG_RESPONSE_TIME
-//	            Value: Policy configuration. Object.
-//	                Threshold: String
-//	                Period(s): Integer
-//	                Count: Integer
-//	                URIList: List<String>
-//	                URIRegex: String
-//	    ---------------------------
+//     ServiceWithPolicyJSON: List JSON serialization of ServiceWithPolicy.
+//         --- ServiceWithPolicy ---
+//         ServiceName: String
+//         UUID: String
+//         Profiling: Multiple profiling configuration. Map
+//             Key: Profiling type. Enum, value = ON_CPU, OFF_CPU, NETWORK
+//             Value: Profiling policies. Map
+//                 Key: Monitoring type. Enum, value = PROCESS_CPU, PROCESS_THREAD_COUNT, SYSTEM_LOAD, HTTP_ERROR_RATE, HTTP_AVG_RESPONSE_TIME
+//                 Value: Policy configuration. Object.
+//                     Threshold: String
+//                     Period(s): Integer
+//                     Count: Integer
+//                     URIList: List<String>
+//                     URIRegex: String
+//         ---------------------------
 //
 // Name: ContinuousProfilingReportTask
 // Args:
-//
-//	TaskId: String
+//     TaskId: String
 type Command struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

@@ -176,7 +176,6 @@ type LogDataBody struct {
 	// Content with extendable format.
 	//
 	// Types that are assignable to Content:
-	//
 	//	*LogDataBody_Text
 	//	*LogDataBody_Json
 	//	*LogDataBody_Yaml

@@ -115,7 +115,7 @@ type BrowserPerfData struct {
 	DnsTime int32 `protobuf:"varint,6,opt,name=dnsTime,proto3" json:"dnsTime,omitempty"`
 	// Time to first Byte
 	TtfbTime int32 `protobuf:"varint,7,opt,name=ttfbTime,proto3" json:"ttfbTime,omitempty"`
-	// TCP connection time
+	//  TCP connection time
 	TcpTime int32 `protobuf:"varint,8,opt,name=tcpTime,proto3" json:"tcpTime,omitempty"`
 	// Content transfer time
 	TransTime int32 `protobuf:"varint,9,opt,name=transTime,proto3" json:"transTime,omitempty"`

@@ -26,8 +26,7 @@ const (
 // type functional attributes. All per-resource type attributes will be `xds.resource.`
 // prefixed and some of these are documented below:
 // `xds.resource.listening_address`: The value is "IP:port" (e.g. "10.1.1.3:8080") which is
-//
-//	the listening address of a Listener. Used in a Listener resource query.
+//   the listening address of a Listener. Used in a Listener resource query.
 type ContextParams struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
