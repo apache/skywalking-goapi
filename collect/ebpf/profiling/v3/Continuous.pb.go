@@ -225,6 +225,7 @@ type ContinuousProfilingReport struct {
 	// target profiling task
 	//
 	// Types that are assignable to TargetTask:
+	//
 	//	*ContinuousProfilingReport_OnCPU
 	//	*ContinuousProfilingReport_OffCPU
 	//	*ContinuousProfilingReport_Network
@@ -362,6 +363,7 @@ type ContinuousProfilingCause struct {
 
 	Type ContinuousProfilingTriggeredMonitorType `protobuf:"varint,1,opt,name=type,proto3,enum=skywalking.v3.ContinuousProfilingTriggeredMonitorType" json:"type,omitempty"`
 	// Types that are assignable to Cause:
+	//
 	//	*ContinuousProfilingCause_SingleValue
 	//	*ContinuousProfilingCause_Uri
 	Cause isContinuousProfilingCause_Cause `protobuf_oneof:"cause"`
@@ -504,6 +506,7 @@ type ContinuousProfilingURICause struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Uri:
+	//
 	//	*ContinuousProfilingURICause_Regex
 	//	*ContinuousProfilingURICause_Path
 	Uri       isContinuousProfilingURICause_Uri `protobuf_oneof:"uri"`

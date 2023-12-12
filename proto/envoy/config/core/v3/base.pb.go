@@ -538,6 +538,7 @@ type Node struct {
 	// E.g. "envoy" or "grpc"
 	UserAgentName string `protobuf:"bytes,6,opt,name=user_agent_name,json=userAgentName,proto3" json:"user_agent_name,omitempty"`
 	// Types that are assignable to UserAgentVersionType:
+	//
 	//	*Node_UserAgentVersion
 	//	*Node_UserAgentBuildVersion
 	UserAgentVersionType isNode_UserAgentVersionType `protobuf_oneof:"user_agent_version_type"`
@@ -712,9 +713,10 @@ func (*Node_UserAgentBuildVersion) isNode_UserAgentVersionType() {}
 // object to match against. There are some well defined metadata used today for
 // this purpose:
 //
-// * ``{"envoy.lb": {"canary": <bool> }}`` This indicates the canary status of an
-//   endpoint and is also used during header processing
-//   (x-envoy-upstream-canary) and for stats purposes.
+//   - “{"envoy.lb": {"canary": <bool> }}“ This indicates the canary status of an
+//     endpoint and is also used during header processing
+//     (x-envoy-upstream-canary) and for stats purposes.
+//
 // [#next-major-version: move to type/metadata/v2]
 type Metadata struct {
 	state         protoimpl.MessageState
@@ -1253,6 +1255,7 @@ type DataSource struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Specifier:
+	//
 	//	*DataSource_Filename
 	//	*DataSource_InlineBytes
 	//	*DataSource_InlineString
@@ -1479,6 +1482,7 @@ type AsyncDataSource struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Specifier:
+	//
 	//	*AsyncDataSource_Local
 	//	*AsyncDataSource_Remote
 	Specifier isAsyncDataSource_Specifier `protobuf_oneof:"specifier"`
@@ -1571,6 +1575,7 @@ type TransportSocket struct {
 	// See the supported transport socket implementations for further documentation.
 	//
 	// Types that are assignable to ConfigType:
+	//
 	//	*TransportSocket_TypedConfig
 	ConfigType isTransportSocket_ConfigType `protobuf_oneof:"config_type"`
 }
@@ -1643,11 +1648,11 @@ func (*TransportSocket_TypedConfig) isTransportSocket_ConfigType() {}
 //
 // .. note::
 //
-//   Parsing of the runtime key's data is implemented such that it may be represented as a
-//   :ref:`FractionalPercent <envoy_v3_api_msg_type.v3.FractionalPercent>` proto represented as JSON/YAML
-//   and may also be represented as an integer with the assumption that the value is an integral
-//   percentage out of 100. For instance, a runtime key lookup returning the value "42" would parse
-//   as a `FractionalPercent` whose numerator is 42 and denominator is HUNDRED.
+//	Parsing of the runtime key's data is implemented such that it may be represented as a
+//	:ref:`FractionalPercent <envoy_v3_api_msg_type.v3.FractionalPercent>` proto represented as JSON/YAML
+//	and may also be represented as an integer with the assumption that the value is an integral
+//	percentage out of 100. For instance, a runtime key lookup returning the value "42" would parse
+//	as a `FractionalPercent` whose numerator is 42 and denominator is HUNDRED.
 type RuntimeFractionalPercent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

@@ -90,6 +90,7 @@ type ServiceMeshMetrics struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Metrics:
+	//
 	//	*ServiceMeshMetrics_HttpMetrics
 	//	*ServiceMeshMetrics_TcpMetrics
 	Metrics isServiceMeshMetrics_Metrics `protobuf_oneof:"metrics"`
@@ -199,7 +200,8 @@ type HTTPServiceMeshMetric struct {
 	// | ... request workflow  ... | upstream | ----- response -----> |                proxy                | ------- response -------> | client  |
 	// |                 time_to_first_upstream_rx_byte               |
 	// |                                  time_to_last_downstream_tx_byte                                                               |
-	//                                                                |              internalResponseLatencyNanos                       |
+	//
+	//	|              internalResponseLatencyNanos                       |
 	InternalResponseLatencyNanos int64                    `protobuf:"varint,16,opt,name=internalResponseLatencyNanos,proto3" json:"internalResponseLatencyNanos,omitempty"`
 	SourceInstanceProperties     []*v3.KeyStringValuePair `protobuf:"bytes,17,rep,name=sourceInstanceProperties,proto3" json:"sourceInstanceProperties,omitempty"`
 	DestInstanceProperties       []*v3.KeyStringValuePair `protobuf:"bytes,18,rep,name=destInstanceProperties,proto3" json:"destInstanceProperties,omitempty"`
@@ -439,7 +441,8 @@ type TCPServiceMeshMetric struct {
 	// | ... request workflow  ... | upstream | ----- response -----> |                proxy                | ------- response -------> | client  |
 	// |                 time_to_first_upstream_rx_byte               |
 	// |                                  time_to_last_downstream_tx_byte                                                               |
-	//                                                                |              internalResponseLatencyNanos                       |
+	//
+	//	|              internalResponseLatencyNanos                       |
 	InternalResponseLatencyNanos int64                    `protobuf:"varint,11,opt,name=internalResponseLatencyNanos,proto3" json:"internalResponseLatencyNanos,omitempty"`
 	SourceInstanceProperties     []*v3.KeyStringValuePair `protobuf:"bytes,12,rep,name=sourceInstanceProperties,proto3" json:"sourceInstanceProperties,omitempty"`
 	DestInstanceProperties       []*v3.KeyStringValuePair `protobuf:"bytes,13,rep,name=destInstanceProperties,proto3" json:"destInstanceProperties,omitempty"`

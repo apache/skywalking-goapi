@@ -305,6 +305,7 @@ type MeterData struct {
 	// Meter data could be a single value or histogram.
 	//
 	// Types that are assignable to Metric:
+	//
 	//	*MeterData_SingleValue
 	//	*MeterData_Histogram
 	Metric isMeterData_Metric `protobuf_oneof:"metric"`

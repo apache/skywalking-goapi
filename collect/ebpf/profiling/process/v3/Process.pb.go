@@ -102,6 +102,7 @@ type EBPFProcessProperties struct {
 	// The Process metadata
 	//
 	// Types that are assignable to Metadata:
+	//
 	//	*EBPFProcessProperties_HostProcess
 	//	*EBPFProcessProperties_K8SProcess
 	Metadata isEBPFProcessProperties_Metadata `protobuf_oneof:"metadata"`
@@ -453,6 +454,7 @@ type EBPFProcessDownstream struct {
 	// Locate the process by basic information
 	//
 	// Types that are assignable to Process:
+	//
 	//	*EBPFProcessDownstream_HostProcess
 	//	*EBPFProcessDownstream_K8SProcess
 	Process isEBPFProcessDownstream_Process `protobuf_oneof:"process"`
