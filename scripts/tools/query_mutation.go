@@ -28,6 +28,9 @@ import (
 )
 
 func addingOmitemptyToTag(tag string) string {
+	if strings.ContainsAny(tag, "omitempty") {
+		return tag
+	}
 	jsonPrefix := strings.Index(tag, "json:\"")
 	if jsonPrefix < 0 {
 		return tag + "json:\",omitempty\""
@@ -70,3 +73,4 @@ func main() {
 		os.Exit(3)
 	}
 }
+
