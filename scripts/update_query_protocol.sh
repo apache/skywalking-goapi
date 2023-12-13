@@ -42,11 +42,12 @@ tar -zxf "$TEMPDIR"/query-protocol.tgz -C "$TEMPDIR"/query-protocol --strip 1
 
 rm -rf "$TEMPDIR"/query-protocol.tgz
 
-go get github.com/99designs/gqlgen@v0.17.23
+go get github.com/99designs/gqlgen@v0.17.41
 
-"$(go env GOPATH)"/bin/gqlgen -h > /dev/null 2>&1 || GO111MODULE=off go get github.com/99designs/gqlgen
-go run "$BASEDIR"/scripts/tools/query_mutation.go
+"$(go env GOPATH)"/bin/gqlgen -h > /dev/null 2>&1 || go install github.com/99designs/gqlgen
+"$(go env GOPATH)"/bin/gqlgen generate
 
 rm -rf "$TEMPDIR"/query-protocol
 
 go mod tidy
+

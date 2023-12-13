@@ -70,7 +70,7 @@ type BrowserErrorLogQueryCondition struct {
 	PagePathID       *string        `json:"pagePathId,omitempty"`
 	Category         *ErrorCategory `json:"category,omitempty"`
 	QueryDuration    *Duration      `json:"queryDuration,omitempty"`
-	Paging           *Pagination    `json:"paging,omitempty"`
+	Paging           *Pagination    `json:"paging"`
 }
 
 type BrowserErrorLogs struct {
@@ -119,7 +119,7 @@ type ContinuousProfilingPolicyItem struct {
 	Threshold string                         `json:"threshold"`
 	Period    int                            `json:"period"`
 	Count     int                            `json:"count"`
-	URIList   []string                       `json:"uriList"`
+	URIList   []string                       `json:"uriList,omitempty"`
 	URIRegex  *string                        `json:"uriRegex,omitempty"`
 }
 
@@ -128,7 +128,7 @@ type ContinuousProfilingPolicyItemCreation struct {
 	Threshold string                         `json:"threshold"`
 	Period    int                            `json:"period"`
 	Count     int                            `json:"count"`
-	URIList   []string                       `json:"uriList"`
+	URIList   []string                       `json:"uriList,omitempty"`
 	URIRegex  *string                        `json:"uriRegex,omitempty"`
 }
 
@@ -207,7 +207,7 @@ type EBPFNetworkSamplingRule struct {
 	MinDuration *int                               `json:"minDuration,omitempty"`
 	When4xx     bool                               `json:"when4xx"`
 	When5xx     bool                               `json:"when5xx"`
-	Settings    *EBPFNetworkDataCollectingSettings `json:"settings,omitempty"`
+	Settings    *EBPFNetworkDataCollectingSettings `json:"settings"`
 }
 
 type EBPFProfilingAnalyzation struct {
@@ -222,13 +222,13 @@ type EBPFProfilingAnalyzeTimeRange struct {
 
 type EBPFProfilingNetworkTaskRequest struct {
 	InstanceID string                     `json:"instanceId"`
-	Samplings  []*EBPFNetworkSamplingRule `json:"samplings"`
+	Samplings  []*EBPFNetworkSamplingRule `json:"samplings,omitempty"`
 }
 
 type EBPFProfilingSchedule struct {
 	ScheduleID string   `json:"scheduleId"`
 	TaskID     string   `json:"taskId"`
-	Process    *Process `json:"process,omitempty"`
+	Process    *Process `json:"process"`
 	StartTime  int64    `json:"startTime"`
 	EndTime    int64    `json:"endTime"`
 }
@@ -253,7 +253,7 @@ type EBPFProfilingTask struct {
 	TaskStartTime             int64                                `json:"taskStartTime"`
 	TriggerType               EBPFProfilingTriggerType             `json:"triggerType"`
 	FixedTriggerDuration      *int64                               `json:"fixedTriggerDuration,omitempty"`
-	ContinuousProfilingCauses []*ContinuousProfilingTriggeredCause `json:"continuousProfilingCauses"`
+	ContinuousProfilingCauses []*ContinuousProfilingTriggeredCause `json:"continuousProfilingCauses,omitempty"`
 	TargetType                EBPFProfilingTargetType              `json:"targetType"`
 	CreateTime                int64                                `json:"createTime"`
 }
@@ -323,11 +323,11 @@ type Entity struct {
 
 type Event struct {
 	UUID       string      `json:"uuid"`
-	Source     *Source     `json:"source,omitempty"`
+	Source     *Source     `json:"source"`
 	Name       string      `json:"name"`
 	Type       EventType   `json:"type"`
 	Message    *string     `json:"message,omitempty"`
-	Parameters []*KeyValue `json:"parameters"`
+	Parameters []*KeyValue `json:"parameters,omitempty"`
 	StartTime  int64       `json:"startTime"`
 	EndTime    *int64      `json:"endTime,omitempty"`
 	Layer      string      `json:"layer"`
@@ -341,7 +341,7 @@ type EventQueryCondition struct {
 	Time   *Duration    `json:"time,omitempty"`
 	Order  *Order       `json:"order,omitempty"`
 	Layer  *string      `json:"layer,omitempty"`
-	Paging *Pagination  `json:"paging,omitempty"`
+	Paging *Pagination  `json:"paging"`
 }
 
 type Events struct {
@@ -405,12 +405,12 @@ type Log struct {
 	Timestamp           int64       `json:"timestamp"`
 	ContentType         ContentType `json:"contentType"`
 	Content             *string     `json:"content,omitempty"`
-	Tags                []*KeyValue `json:"tags"`
+	Tags                []*KeyValue `json:"tags,omitempty"`
 }
 
 type LogEntity struct {
 	Time int64       `json:"time"`
-	Data []*KeyValue `json:"data"`
+	Data []*KeyValue `json:"data,omitempty"`
 }
 
 type LogQueryCondition struct {
@@ -419,10 +419,10 @@ type LogQueryCondition struct {
 	EndpointID                 *string              `json:"endpointId,omitempty"`
 	RelatedTrace               *TraceScopeCondition `json:"relatedTrace,omitempty"`
 	QueryDuration              *Duration            `json:"queryDuration,omitempty"`
-	Paging                     *Pagination          `json:"paging,omitempty"`
-	Tags                       []*LogTag            `json:"tags"`
-	KeywordsOfContent          []string             `json:"keywordsOfContent"`
-	ExcludingKeywordsOfContent []string             `json:"excludingKeywordsOfContent"`
+	Paging                     *Pagination          `json:"paging"`
+	Tags                       []*LogTag            `json:"tags,omitempty"`
+	KeywordsOfContent          []string             `json:"keywordsOfContent,omitempty"`
+	ExcludingKeywordsOfContent []string             `json:"excludingKeywordsOfContent,omitempty"`
 	QueryOrder                 *Order               `json:"queryOrder,omitempty"`
 }
 
@@ -433,7 +433,7 @@ type LogTag struct {
 
 type LogTestMetrics struct {
 	Name      string      `json:"name"`
-	Tags      []*KeyValue `json:"tags"`
+	Tags      []*KeyValue `json:"tags,omitempty"`
 	Value     int64       `json:"value"`
 	Timestamp int64       `json:"timestamp"`
 }
@@ -445,7 +445,7 @@ type LogTestRequest struct {
 
 type LogTestResponse struct {
 	Log     *Log              `json:"log,omitempty"`
-	Metrics []*LogTestMetrics `json:"metrics"`
+	Metrics []*LogTestMetrics `json:"metrics,omitempty"`
 }
 
 type Logs struct {
@@ -492,7 +492,7 @@ type MetricDefinition struct {
 
 type MetricsCondition struct {
 	Name   string  `json:"name"`
-	Entity *Entity `json:"entity,omitempty"`
+	Entity *Entity `json:"entity"`
 }
 
 type MetricsValues struct {
@@ -524,8 +524,8 @@ type OndemandLogQueryCondition struct {
 	ServiceInstanceID          *string   `json:"serviceInstanceId,omitempty"`
 	Container                  string    `json:"container"`
 	Duration                   *Duration `json:"duration,omitempty"`
-	KeywordsOfContent          []string  `json:"keywordsOfContent"`
-	ExcludingKeywordsOfContent []string  `json:"excludingKeywordsOfContent"`
+	KeywordsOfContent          []string  `json:"keywordsOfContent,omitempty"`
+	ExcludingKeywordsOfContent []string  `json:"excludingKeywordsOfContent,omitempty"`
 }
 
 type Pagination struct {
@@ -668,7 +668,7 @@ type Record struct {
 
 type RecordCondition struct {
 	Name         string  `json:"name"`
-	ParentEntity *Entity `json:"parentEntity,omitempty"`
+	ParentEntity *Entity `json:"parentEntity"`
 	TopN         int     `json:"topN"`
 	Order        Order   `json:"order"`
 }
@@ -682,7 +682,7 @@ type Ref struct {
 
 type SegmentProfileAnalyzeQuery struct {
 	SegmentID string                   `json:"segmentId"`
-	TimeRange *ProfileAnalyzeTimeRange `json:"timeRange,omitempty"`
+	TimeRange *ProfileAnalyzeTimeRange `json:"timeRange"`
 }
 
 type SelectedRecord struct {
@@ -757,9 +757,9 @@ type Span struct {
 }
 
 type SpanAttachedEvent struct {
-	StartTime *Instant           `json:"startTime,omitempty"`
+	StartTime *Instant           `json:"startTime"`
 	Event     string             `json:"event"`
-	EndTime   *Instant           `json:"endTime,omitempty"`
+	EndTime   *Instant           `json:"endTime"`
 	Tags      []*KeyValue        `json:"tags"`
 	Summary   []*KeyNumericValue `json:"summary"`
 }
@@ -811,7 +811,7 @@ type TopNRecordsCondition struct {
 	MetricName string    `json:"metricName"`
 	TopN       int       `json:"topN"`
 	Order      Order     `json:"order"`
-	Duration   *Duration `json:"duration,omitempty"`
+	Duration   *Duration `json:"duration"`
 }
 
 type Topology struct {
@@ -837,8 +837,8 @@ type TraceQueryCondition struct {
 	MaxTraceDuration  *int        `json:"maxTraceDuration,omitempty"`
 	TraceState        TraceState  `json:"traceState"`
 	QueryOrder        QueryOrder  `json:"queryOrder"`
-	Tags              []*SpanTag  `json:"tags"`
-	Paging            *Pagination `json:"paging,omitempty"`
+	Tags              []*SpanTag  `json:"tags,omitempty"`
+	Paging            *Pagination `json:"paging"`
 }
 
 type TraceScopeCondition struct {
