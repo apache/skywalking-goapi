@@ -45,7 +45,7 @@ rm -rf "$TEMPDIR"/query-protocol.tgz
 go get github.com/99designs/gqlgen@v0.17.41
 
 "$(go env GOPATH)"/bin/gqlgen -h > /dev/null 2>&1 || go install github.com/99designs/gqlgen
-go run "$BASEDIR"/scripts/tools/query_mutation.go
+"$(go env GOPATH)"/bin/gqlgen generate
 
 rm -rf "$TEMPDIR"/query-protocol
 
