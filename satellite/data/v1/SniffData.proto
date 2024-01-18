@@ -59,6 +59,7 @@ enum SniffType {
   EBPFProcessType = 14;
   EBPFProfilingType = 15;
   OpenTelementryMetricsV1Type = 16;
+  EBPFAccessLogType = 17;
 }
 
 // SniffData is the transfer unit in Satellite.
@@ -105,6 +106,7 @@ message SniffData {
     bytes spanAttachedEvent = 31;
     ContinuousProfilingPolicyQuery continuousProfilingPolicyQuery = 32;
     ContinuousProfilingReport continuousProfilingReport = 33;
+    EBPFAccessLogList eBPFAccessLogList = 34;
   }
 }
 
@@ -130,4 +132,8 @@ message EnvoyMetricsV3List {
 
 message EBPFProfilingDataList {
   repeated EBPFProfilingData dataList = 1;
+}
+
+message EBPFAccessLogList {
+  repeated bytes messages = 1;
 }
