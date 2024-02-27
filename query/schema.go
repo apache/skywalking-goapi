@@ -369,6 +369,36 @@ type HeatMapColumn struct {
 	Values []int64 `json:"values"`
 }
 
+type HierarchyInstanceRelation struct {
+	UpperInstance *HierarchyRelatedInstance `json:"upperInstance"`
+	LowerInstance *HierarchyRelatedInstance `json:"lowerInstance"`
+}
+
+type HierarchyRelatedInstance struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	ServiceID   string `json:"serviceId"`
+	ServiceName string `json:"serviceName"`
+	Layer       string `json:"layer"`
+	Normal      bool   `json:"normal"`
+}
+
+type HierarchyRelatedService struct {
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Layer  string `json:"layer"`
+	Normal bool   `json:"normal"`
+}
+
+type HierarchyServiceRelation struct {
+	UpperService *HierarchyRelatedService `json:"upperService"`
+	LowerService *HierarchyRelatedService `json:"lowerService"`
+}
+
+type InstanceHierarchy struct {
+	Relations []*HierarchyInstanceRelation `json:"relations"`
+}
+
 type Instant struct {
 	Seconds int64 `json:"seconds"`
 	Nanos   int   `json:"nanos"`
@@ -392,6 +422,11 @@ type KeyNumericValue struct {
 type KeyValue struct {
 	Key   string  `json:"key"`
 	Value *string `json:"value,omitempty"`
+}
+
+type LayerLevel struct {
+	Layer string `json:"layer"`
+	Level int    `json:"level"`
 }
 
 type Log struct {
@@ -505,10 +540,11 @@ type NewDashboardSetting struct {
 }
 
 type Node struct {
-	ID     string  `json:"id"`
-	Name   string  `json:"name"`
-	Type   *string `json:"type,omitempty"`
-	IsReal bool    `json:"isReal"`
+	ID     string   `json:"id"`
+	Name   string   `json:"name"`
+	Type   *string  `json:"type,omitempty"`
+	IsReal bool     `json:"isReal"`
+	Layers []string `json:"layers"`
 }
 
 type NullableValue struct {
@@ -699,6 +735,10 @@ type Service struct {
 	ShortName string   `json:"shortName"`
 	Layers    []string `json:"layers"`
 	Normal    *bool    `json:"normal,omitempty"`
+}
+
+type ServiceHierarchy struct {
+	Relations []*HierarchyServiceRelation `json:"relations"`
 }
 
 type ServiceInstance struct {
