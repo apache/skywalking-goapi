@@ -30,6 +30,79 @@ type Alarms struct {
 	Msgs []*AlarmMessage `json:"msgs"`
 }
 
+type AsyncProfilerAnalyzation struct {
+	Tree *AsyncProfilerStackTree `json:"tree,omitempty"`
+}
+
+type AsyncProfilerAnalyzationRequest struct {
+	TaskID      string       `json:"taskId"`
+	InstanceIds []string     `json:"instanceIds"`
+	EventType   JFREventType `json:"eventType"`
+}
+
+type AsyncProfilerStackElement struct {
+	ID            string `json:"id"`
+	ParentID      string `json:"parentId"`
+	CodeSignature string `json:"codeSignature"`
+	Total         int64  `json:"total"`
+	Self          int64  `json:"self"`
+}
+
+type AsyncProfilerStackTree struct {
+	Type     JFREventType                 `json:"type"`
+	Elements []*AsyncProfilerStackElement `json:"elements,omitempty"`
+}
+
+type AsyncProfilerTask struct {
+	ID                 string                   `json:"id"`
+	ServiceID          string                   `json:"serviceId"`
+	ServiceInstanceIds []string                 `json:"serviceInstanceIds"`
+	CreateTime         int64                    `json:"createTime"`
+	Events             []AsyncProfilerEventType `json:"events"`
+	Duration           int                      `json:"duration"`
+	ExecArgs           *string                  `json:"execArgs,omitempty"`
+}
+
+type AsyncProfilerTaskCreationRequest struct {
+	ServiceID          string                   `json:"serviceId"`
+	ServiceInstanceIds []string                 `json:"serviceInstanceIds"`
+	Duration           int                      `json:"duration"`
+	Events             []AsyncProfilerEventType `json:"events"`
+	ExecArgs           *string                  `json:"execArgs,omitempty"`
+}
+
+type AsyncProfilerTaskCreationResult struct {
+	Code        AsyncProfilerTaskCreationType `json:"code"`
+	ErrorReason *string                       `json:"errorReason,omitempty"`
+	ID          *string                       `json:"id,omitempty"`
+}
+
+type AsyncProfilerTaskListRequest struct {
+	ServiceID string `json:"serviceId"`
+	StartTime *int64 `json:"startTime,omitempty"`
+	EndTime   *int64 `json:"endTime,omitempty"`
+	Limit     *int   `json:"limit,omitempty"`
+}
+
+type AsyncProfilerTaskListResult struct {
+	ErrorReason *string              `json:"errorReason,omitempty"`
+	Tasks       []*AsyncProfilerTask `json:"tasks,omitempty"`
+}
+
+type AsyncProfilerTaskLog struct {
+	ID            string                            `json:"id"`
+	InstanceID    string                            `json:"instanceId"`
+	InstanceName  string                            `json:"instanceName"`
+	OperationType AsyncProfilerTaskLogOperationType `json:"operationType"`
+	OperationTime int64                             `json:"operationTime"`
+}
+
+type AsyncProfilerTaskProgress struct {
+	Logs               []*AsyncProfilerTaskLog `json:"logs,omitempty"`
+	ErrorInstanceIds   []*string               `json:"errorInstanceIds,omitempty"`
+	SuccessInstanceIds []*string               `json:"successInstanceIds,omitempty"`
+}
+
 type Attribute struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
@@ -887,6 +960,143 @@ type TraceScopeCondition struct {
 	SpanID    *int    `json:"spanId,omitempty"`
 }
 
+type AsyncProfilerEventType string
+
+const (
+	AsyncProfilerEventTypeCPU    AsyncProfilerEventType = "CPU"
+	AsyncProfilerEventTypeWall   AsyncProfilerEventType = "WALL"
+	AsyncProfilerEventTypeLock   AsyncProfilerEventType = "LOCK"
+	AsyncProfilerEventTypeAlloc  AsyncProfilerEventType = "ALLOC"
+	AsyncProfilerEventTypeCtimer AsyncProfilerEventType = "CTIMER"
+	AsyncProfilerEventTypeItimer AsyncProfilerEventType = "ITIMER"
+)
+
+var AllAsyncProfilerEventType = []AsyncProfilerEventType{
+	AsyncProfilerEventTypeCPU,
+	AsyncProfilerEventTypeWall,
+	AsyncProfilerEventTypeLock,
+	AsyncProfilerEventTypeAlloc,
+	AsyncProfilerEventTypeCtimer,
+	AsyncProfilerEventTypeItimer,
+}
+
+func (e AsyncProfilerEventType) IsValid() bool {
+	switch e {
+	case AsyncProfilerEventTypeCPU, AsyncProfilerEventTypeWall, AsyncProfilerEventTypeLock, AsyncProfilerEventTypeAlloc, AsyncProfilerEventTypeCtimer, AsyncProfilerEventTypeItimer:
+		return true
+	}
+	return false
+}
+
+func (e AsyncProfilerEventType) String() string {
+	return string(e)
+}
+
+func (e *AsyncProfilerEventType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AsyncProfilerEventType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AsyncProfilerEventType", str)
+	}
+	return nil
+}
+
+func (e AsyncProfilerEventType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type AsyncProfilerTaskCreationType string
+
+const (
+	AsyncProfilerTaskCreationTypeSuccess               AsyncProfilerTaskCreationType = "SUCCESS"
+	AsyncProfilerTaskCreationTypeArgumentError         AsyncProfilerTaskCreationType = "ARGUMENT_ERROR"
+	AsyncProfilerTaskCreationTypeAlreadyProfilingError AsyncProfilerTaskCreationType = "ALREADY_PROFILING_ERROR"
+)
+
+var AllAsyncProfilerTaskCreationType = []AsyncProfilerTaskCreationType{
+	AsyncProfilerTaskCreationTypeSuccess,
+	AsyncProfilerTaskCreationTypeArgumentError,
+	AsyncProfilerTaskCreationTypeAlreadyProfilingError,
+}
+
+func (e AsyncProfilerTaskCreationType) IsValid() bool {
+	switch e {
+	case AsyncProfilerTaskCreationTypeSuccess, AsyncProfilerTaskCreationTypeArgumentError, AsyncProfilerTaskCreationTypeAlreadyProfilingError:
+		return true
+	}
+	return false
+}
+
+func (e AsyncProfilerTaskCreationType) String() string {
+	return string(e)
+}
+
+func (e *AsyncProfilerTaskCreationType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AsyncProfilerTaskCreationType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AsyncProfilerTaskCreationType", str)
+	}
+	return nil
+}
+
+func (e AsyncProfilerTaskCreationType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type AsyncProfilerTaskLogOperationType string
+
+const (
+	AsyncProfilerTaskLogOperationTypeNotified                   AsyncProfilerTaskLogOperationType = "NOTIFIED"
+	AsyncProfilerTaskLogOperationTypeExecutionFinished          AsyncProfilerTaskLogOperationType = "EXECUTION_FINISHED"
+	AsyncProfilerTaskLogOperationTypeJfrUploadFileTooLargeError AsyncProfilerTaskLogOperationType = "JFR_UPLOAD_FILE_TOO_LARGE_ERROR"
+	AsyncProfilerTaskLogOperationTypeExecutionTaskError         AsyncProfilerTaskLogOperationType = "EXECUTION_TASK_ERROR"
+)
+
+var AllAsyncProfilerTaskLogOperationType = []AsyncProfilerTaskLogOperationType{
+	AsyncProfilerTaskLogOperationTypeNotified,
+	AsyncProfilerTaskLogOperationTypeExecutionFinished,
+	AsyncProfilerTaskLogOperationTypeJfrUploadFileTooLargeError,
+	AsyncProfilerTaskLogOperationTypeExecutionTaskError,
+}
+
+func (e AsyncProfilerTaskLogOperationType) IsValid() bool {
+	switch e {
+	case AsyncProfilerTaskLogOperationTypeNotified, AsyncProfilerTaskLogOperationTypeExecutionFinished, AsyncProfilerTaskLogOperationTypeJfrUploadFileTooLargeError, AsyncProfilerTaskLogOperationTypeExecutionTaskError:
+		return true
+	}
+	return false
+}
+
+func (e AsyncProfilerTaskLogOperationType) String() string {
+	return string(e)
+}
+
+func (e *AsyncProfilerTaskLogOperationType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AsyncProfilerTaskLogOperationType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AsyncProfilerTaskLogOperationType", str)
+	}
+	return nil
+}
+
+func (e AsyncProfilerTaskLogOperationType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type ContentType string
 
 const (
@@ -1365,6 +1575,55 @@ func (e *ExpressionResultType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ExpressionResultType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type JFREventType string
+
+const (
+	JFREventTypeExecutionSample             JFREventType = "EXECUTION_SAMPLE"
+	JFREventTypeJavaMonitorEnter            JFREventType = "JAVA_MONITOR_ENTER"
+	JFREventTypeThreadPark                  JFREventType = "THREAD_PARK"
+	JFREventTypeObjectAllocationInNewTlab   JFREventType = "OBJECT_ALLOCATION_IN_NEW_TLAB"
+	JFREventTypeObjectAllocationOutsideTlab JFREventType = "OBJECT_ALLOCATION_OUTSIDE_TLAB"
+	JFREventTypeProfilerLiveObject          JFREventType = "PROFILER_LIVE_OBJECT"
+)
+
+var AllJFREventType = []JFREventType{
+	JFREventTypeExecutionSample,
+	JFREventTypeJavaMonitorEnter,
+	JFREventTypeThreadPark,
+	JFREventTypeObjectAllocationInNewTlab,
+	JFREventTypeObjectAllocationOutsideTlab,
+	JFREventTypeProfilerLiveObject,
+}
+
+func (e JFREventType) IsValid() bool {
+	switch e {
+	case JFREventTypeExecutionSample, JFREventTypeJavaMonitorEnter, JFREventTypeThreadPark, JFREventTypeObjectAllocationInNewTlab, JFREventTypeObjectAllocationOutsideTlab, JFREventTypeProfilerLiveObject:
+		return true
+	}
+	return false
+}
+
+func (e JFREventType) String() string {
+	return string(e)
+}
+
+func (e *JFREventType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = JFREventType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid JFREventType", str)
+	}
+	return nil
+}
+
+func (e JFREventType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
