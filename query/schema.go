@@ -257,6 +257,26 @@ type Database struct {
 	Type string `json:"type"`
 }
 
+type DebuggingSpan struct {
+	SpanID       int     `json:"spanId"`
+	ParentSpanID int     `json:"parentSpanId"`
+	Operation    string  `json:"operation"`
+	StartTime    int64   `json:"startTime"`
+	EndTime      int64   `json:"endTime"`
+	Duration     int64   `json:"duration"`
+	Msg          *string `json:"msg,omitempty"`
+	Error        *string `json:"error,omitempty"`
+}
+
+type DebuggingTrace struct {
+	TraceID   string           `json:"traceId"`
+	Condition string           `json:"condition"`
+	StartTime int64            `json:"startTime"`
+	EndTime   int64            `json:"endTime"`
+	Duration  int64            `json:"duration"`
+	Spans     []*DebuggingSpan `json:"spans"`
+}
+
 type Duration struct {
 	Start string `json:"start"`
 	End   string `json:"end"`
@@ -376,8 +396,9 @@ type EndpointNode struct {
 }
 
 type EndpointTopology struct {
-	Nodes []*EndpointNode `json:"nodes"`
-	Calls []*Call         `json:"calls"`
+	Nodes          []*EndpointNode `json:"nodes"`
+	Calls          []*Call         `json:"calls"`
+	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
 type Entity struct {
@@ -422,9 +443,10 @@ type Events struct {
 }
 
 type ExpressionResult struct {
-	Type    ExpressionResultType `json:"type"`
-	Results []*MQEValues         `json:"results"`
-	Error   *string              `json:"error,omitempty"`
+	Type           ExpressionResultType `json:"type"`
+	Results        []*MQEValues         `json:"results"`
+	Error          *string              `json:"error,omitempty"`
+	DebuggingTrace *DebuggingTrace      `json:"debuggingTrace,omitempty"`
 }
 
 type HealthStatus struct {
@@ -557,8 +579,9 @@ type LogTestResponse struct {
 }
 
 type Logs struct {
-	ErrorReason *string `json:"errorReason,omitempty"`
-	Logs        []*Log  `json:"logs"`
+	ErrorReason    *string         `json:"errorReason,omitempty"`
+	Logs           []*Log          `json:"logs"`
+	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
 type MQEValue struct {
@@ -568,7 +591,7 @@ type MQEValue struct {
 }
 
 type MQEValues struct {
-	Metric *Metadata   `json:"metric,omitempty"`
+	Metric *Metadata   `json:"metric"`
 	Values []*MQEValue `json:"values"`
 }
 
@@ -671,8 +694,9 @@ type ProcessNode struct {
 }
 
 type ProcessTopology struct {
-	Nodes []*ProcessNode `json:"nodes"`
-	Calls []*Call        `json:"calls"`
+	Nodes          []*ProcessNode  `json:"nodes"`
+	Calls          []*Call         `json:"calls"`
+	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
 type ProfileAnalyzation struct {
@@ -832,8 +856,9 @@ type ServiceInstanceNode struct {
 }
 
 type ServiceInstanceTopology struct {
-	Nodes []*ServiceInstanceNode `json:"nodes"`
-	Calls []*Call                `json:"calls"`
+	Nodes          []*ServiceInstanceNode `json:"nodes"`
+	Calls          []*Call                `json:"calls"`
+	DebuggingTrace *DebuggingTrace        `json:"debuggingTrace,omitempty"`
 }
 
 type Source struct {
@@ -928,16 +953,19 @@ type TopNRecordsCondition struct {
 }
 
 type Topology struct {
-	Nodes []*Node `json:"nodes"`
-	Calls []*Call `json:"calls"`
+	Nodes          []*Node         `json:"nodes"`
+	Calls          []*Call         `json:"calls"`
+	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
 type Trace struct {
-	Spans []*Span `json:"spans"`
+	Spans          []*Span         `json:"spans"`
+	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
 type TraceBrief struct {
-	Traces []*BasicTrace `json:"traces"`
+	Traces         []*BasicTrace   `json:"traces"`
+	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
 type TraceQueryCondition struct {
