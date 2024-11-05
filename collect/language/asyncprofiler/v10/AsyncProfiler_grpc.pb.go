@@ -48,7 +48,7 @@ func (c *asyncProfilerTaskClient) Collect(ctx context.Context, opts ...grpc.Call
 
 type AsyncProfilerTask_CollectClient interface {
 	Send(*AsyncProfilerData) error
-	CloseAndRecv() (*v3.Commands, error)
+	Recv() (*AsyncProfilerCollectionResponse, error)
 	grpc.ClientStream
 }
 
@@ -60,11 +60,8 @@ func (x *asyncProfilerTaskCollectClient) Send(m *AsyncProfilerData) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *asyncProfilerTaskCollectClient) CloseAndRecv() (*v3.Commands, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(v3.Commands)
+func (x *asyncProfilerTaskCollectClient) Recv() (*AsyncProfilerCollectionResponse, error) {
+	m := new(AsyncProfilerCollectionResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -119,7 +116,7 @@ func _AsyncProfilerTask_Collect_Handler(srv interface{}, stream grpc.ServerStrea
 }
 
 type AsyncProfilerTask_CollectServer interface {
-	SendAndClose(*v3.Commands) error
+	Send(*AsyncProfilerCollectionResponse) error
 	Recv() (*AsyncProfilerData, error)
 	grpc.ServerStream
 }
@@ -128,7 +125,7 @@ type asyncProfilerTaskCollectServer struct {
 	grpc.ServerStream
 }
 
-func (x *asyncProfilerTaskCollectServer) SendAndClose(m *v3.Commands) error {
+func (x *asyncProfilerTaskCollectServer) Send(m *AsyncProfilerCollectionResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -174,6 +171,7 @@ var AsyncProfilerTask_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "collect",
 			Handler:       _AsyncProfilerTask_Collect_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},

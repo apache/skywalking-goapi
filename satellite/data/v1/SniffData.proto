@@ -34,6 +34,7 @@ import "common/Command.proto";
 import "ebpf/profiling/Process.proto";
 import "ebpf/profiling/Profile.proto";
 import "ebpf/profiling/Continuous.proto";
+import "asyncprofiler/AsyncProfiler.proto";
 
 import "envoy/service/metrics/v2/metrics_service.proto";
 import "envoy/service/metrics/v3/metrics_service.proto";
@@ -60,6 +61,7 @@ enum SniffType {
   EBPFProfilingType = 15;
   OpenTelementryMetricsV1Type = 16;
   EBPFAccessLogType = 17;
+  AsyncProfilerType = 18;
 }
 
 // SniffData is the transfer unit in Satellite.
@@ -107,6 +109,9 @@ message SniffData {
     ContinuousProfilingPolicyQuery continuousProfilingPolicyQuery = 32;
     ContinuousProfilingReport continuousProfilingReport = 33;
     EBPFAccessLogList eBPFAccessLogList = 34;
+    skywalking.v10.AsyncProfilerData asyncProfilerData = 35;
+    skywalking.v10.AsyncProfilerCollectionResponse asyncProfilerCollectionResponse = 36;
+    skywalking.v10.AsyncProfilerTaskCommandQuery asyncProfilerTaskCommandQuery = 37;
   }
 }
 
