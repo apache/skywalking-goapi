@@ -109,7 +109,7 @@ message SniffData {
     ContinuousProfilingPolicyQuery continuousProfilingPolicyQuery = 32;
     ContinuousProfilingReport continuousProfilingReport = 33;
     EBPFAccessLogList eBPFAccessLogList = 34;
-    skywalking.v10.AsyncProfilerData asyncProfilerData = 35;
+    bytes asyncProfilerData = 35;
     skywalking.v10.AsyncProfilerCollectionResponse asyncProfilerCollectionResponse = 36;
     skywalking.v10.AsyncProfilerTaskCommandQuery asyncProfilerTaskCommandQuery = 37;
   }
