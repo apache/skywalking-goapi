@@ -78,10 +78,9 @@ type AsyncProfilerTaskCreationResult struct {
 }
 
 type AsyncProfilerTaskListRequest struct {
-	ServiceID string `json:"serviceId"`
-	StartTime *int64 `json:"startTime,omitempty"`
-	EndTime   *int64 `json:"endTime,omitempty"`
-	Limit     *int   `json:"limit,omitempty"`
+	ServiceID     string    `json:"serviceId"`
+	QueryDuration *Duration `json:"queryDuration,omitempty"`
+	Limit         *int      `json:"limit,omitempty"`
 }
 
 type AsyncProfilerTaskListResult struct {
@@ -586,6 +585,7 @@ type Logs struct {
 
 type MQEValue struct {
 	ID      *string `json:"id,omitempty"`
+	Owner   *Owner  `json:"owner,omitempty"`
 	Value   *string `json:"value,omitempty"`
 	TraceID *string `json:"traceID,omitempty"`
 }
@@ -658,6 +658,17 @@ type OndemandLogQueryCondition struct {
 	Duration                   *Duration `json:"duration,omitempty"`
 	KeywordsOfContent          []string  `json:"keywordsOfContent,omitempty"`
 	ExcludingKeywordsOfContent []string  `json:"excludingKeywordsOfContent,omitempty"`
+}
+
+type Owner struct {
+	Scope               *Scope  `json:"scope,omitempty"`
+	ServiceID           *string `json:"serviceID,omitempty"`
+	ServiceName         *string `json:"serviceName,omitempty"`
+	Normal              *bool   `json:"normal,omitempty"`
+	ServiceInstanceID   *string `json:"serviceInstanceID,omitempty"`
+	ServiceInstanceName *string `json:"serviceInstanceName,omitempty"`
+	EndpointID          *string `json:"endpointID,omitempty"`
+	EndpointName        *string `json:"endpointName,omitempty"`
 }
 
 type Pagination struct {
@@ -1610,8 +1621,7 @@ type JFREventType string
 
 const (
 	JFREventTypeExecutionSample             JFREventType = "EXECUTION_SAMPLE"
-	JFREventTypeJavaMonitorEnter            JFREventType = "JAVA_MONITOR_ENTER"
-	JFREventTypeThreadPark                  JFREventType = "THREAD_PARK"
+	JFREventTypeLock                        JFREventType = "LOCK"
 	JFREventTypeObjectAllocationInNewTlab   JFREventType = "OBJECT_ALLOCATION_IN_NEW_TLAB"
 	JFREventTypeObjectAllocationOutsideTlab JFREventType = "OBJECT_ALLOCATION_OUTSIDE_TLAB"
 	JFREventTypeProfilerLiveObject          JFREventType = "PROFILER_LIVE_OBJECT"
@@ -1619,8 +1629,7 @@ const (
 
 var AllJFREventType = []JFREventType{
 	JFREventTypeExecutionSample,
-	JFREventTypeJavaMonitorEnter,
-	JFREventTypeThreadPark,
+	JFREventTypeLock,
 	JFREventTypeObjectAllocationInNewTlab,
 	JFREventTypeObjectAllocationOutsideTlab,
 	JFREventTypeProfilerLiveObject,
@@ -1628,7 +1637,7 @@ var AllJFREventType = []JFREventType{
 
 func (e JFREventType) IsValid() bool {
 	switch e {
-	case JFREventTypeExecutionSample, JFREventTypeJavaMonitorEnter, JFREventTypeThreadPark, JFREventTypeObjectAllocationInNewTlab, JFREventTypeObjectAllocationOutsideTlab, JFREventTypeProfilerLiveObject:
+	case JFREventTypeExecutionSample, JFREventTypeLock, JFREventTypeObjectAllocationInNewTlab, JFREventTypeObjectAllocationOutsideTlab, JFREventTypeProfilerLiveObject:
 		return true
 	}
 	return false
