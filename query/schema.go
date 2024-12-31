@@ -9,21 +9,24 @@ import (
 )
 
 type AlarmMessage struct {
-	StartTime int64       `json:"startTime"`
-	Scope     *Scope      `json:"scope,omitempty"`
-	ID        string      `json:"id"`
-	Message   string      `json:"message"`
-	Events    []*Event    `json:"events"`
-	Tags      []*KeyValue `json:"tags"`
+	StartTime int64          `json:"startTime"`
+	Scope     *Scope         `json:"scope,omitempty"`
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	Message   string         `json:"message"`
+	Events    []*Event       `json:"events"`
+	Tags      []*KeyValue    `json:"tags"`
+	Snapshot  *AlarmSnapshot `json:"snapshot"`
+}
+
+type AlarmSnapshot struct {
+	Expression string       `json:"expression"`
+	Metrics    []*MQEMetric `json:"metrics"`
 }
 
 type AlarmTag struct {
 	Key   string  `json:"key"`
 	Value *string `json:"value,omitempty"`
-}
-
-type AlarmTrend struct {
-	NumOfAlarm []*int `json:"numOfAlarm"`
 }
 
 type Alarms struct {
@@ -581,6 +584,11 @@ type Logs struct {
 	ErrorReason    *string         `json:"errorReason,omitempty"`
 	Logs           []*Log          `json:"logs"`
 	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
+}
+
+type MQEMetric struct {
+	Name    string       `json:"name"`
+	Results []*MQEValues `json:"results"`
 }
 
 type MQEValue struct {
