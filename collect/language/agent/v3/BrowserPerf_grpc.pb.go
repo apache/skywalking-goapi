@@ -25,6 +25,12 @@ const _ = grpc.SupportPackageIsVersion7
 type BrowserPerfServiceClient interface {
 	// report once per page
 	CollectPerfData(ctx context.Context, in *BrowserPerfData, opts ...grpc.CallOption) (*v3.Commands, error)
+	// report one or more web vitals data for pages, could report multiple times.
+	CollectWebVitalsPerfData(ctx context.Context, in *BrowserWebVitalsPerfData, opts ...grpc.CallOption) (*v3.Commands, error)
+	// report one or more resource data for pages, could report multiple times.
+	CollectResourcePerfData(ctx context.Context, in *BrowserResourcePerfData, opts ...grpc.CallOption) (*v3.Commands, error)
+	// report one or more web interactions data for pages, could report multiple times.
+	CollectWebInteractionsPerfData(ctx context.Context, in *BrowserWebInteractionsPerfData, opts ...grpc.CallOption) (*v3.Commands, error)
 	// report one or more error logs for pages, could report multiple times.
 	CollectErrorLogs(ctx context.Context, opts ...grpc.CallOption) (BrowserPerfService_CollectErrorLogsClient, error)
 }
@@ -40,6 +46,33 @@ func NewBrowserPerfServiceClient(cc grpc.ClientConnInterface) BrowserPerfService
 func (c *browserPerfServiceClient) CollectPerfData(ctx context.Context, in *BrowserPerfData, opts ...grpc.CallOption) (*v3.Commands, error) {
 	out := new(v3.Commands)
 	err := c.cc.Invoke(ctx, "/skywalking.v3.BrowserPerfService/collectPerfData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *browserPerfServiceClient) CollectWebVitalsPerfData(ctx context.Context, in *BrowserWebVitalsPerfData, opts ...grpc.CallOption) (*v3.Commands, error) {
+	out := new(v3.Commands)
+	err := c.cc.Invoke(ctx, "/skywalking.v3.BrowserPerfService/collectWebVitalsPerfData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *browserPerfServiceClient) CollectResourcePerfData(ctx context.Context, in *BrowserResourcePerfData, opts ...grpc.CallOption) (*v3.Commands, error) {
+	out := new(v3.Commands)
+	err := c.cc.Invoke(ctx, "/skywalking.v3.BrowserPerfService/collectResourcePerfData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *browserPerfServiceClient) CollectWebInteractionsPerfData(ctx context.Context, in *BrowserWebInteractionsPerfData, opts ...grpc.CallOption) (*v3.Commands, error) {
+	out := new(v3.Commands)
+	err := c.cc.Invoke(ctx, "/skywalking.v3.BrowserPerfService/collectWebInteractionsPerfData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +119,12 @@ func (x *browserPerfServiceCollectErrorLogsClient) CloseAndRecv() (*v3.Commands,
 type BrowserPerfServiceServer interface {
 	// report once per page
 	CollectPerfData(context.Context, *BrowserPerfData) (*v3.Commands, error)
+	// report one or more web vitals data for pages, could report multiple times.
+	CollectWebVitalsPerfData(context.Context, *BrowserWebVitalsPerfData) (*v3.Commands, error)
+	// report one or more resource data for pages, could report multiple times.
+	CollectResourcePerfData(context.Context, *BrowserResourcePerfData) (*v3.Commands, error)
+	// report one or more web interactions data for pages, could report multiple times.
+	CollectWebInteractionsPerfData(context.Context, *BrowserWebInteractionsPerfData) (*v3.Commands, error)
 	// report one or more error logs for pages, could report multiple times.
 	CollectErrorLogs(BrowserPerfService_CollectErrorLogsServer) error
 	mustEmbedUnimplementedBrowserPerfServiceServer()
@@ -97,6 +136,15 @@ type UnimplementedBrowserPerfServiceServer struct {
 
 func (UnimplementedBrowserPerfServiceServer) CollectPerfData(context.Context, *BrowserPerfData) (*v3.Commands, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectPerfData not implemented")
+}
+func (UnimplementedBrowserPerfServiceServer) CollectWebVitalsPerfData(context.Context, *BrowserWebVitalsPerfData) (*v3.Commands, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectWebVitalsPerfData not implemented")
+}
+func (UnimplementedBrowserPerfServiceServer) CollectResourcePerfData(context.Context, *BrowserResourcePerfData) (*v3.Commands, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectResourcePerfData not implemented")
+}
+func (UnimplementedBrowserPerfServiceServer) CollectWebInteractionsPerfData(context.Context, *BrowserWebInteractionsPerfData) (*v3.Commands, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectWebInteractionsPerfData not implemented")
 }
 func (UnimplementedBrowserPerfServiceServer) CollectErrorLogs(BrowserPerfService_CollectErrorLogsServer) error {
 	return status.Errorf(codes.Unimplemented, "method CollectErrorLogs not implemented")
@@ -128,6 +176,60 @@ func _BrowserPerfService_CollectPerfData_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BrowserPerfServiceServer).CollectPerfData(ctx, req.(*BrowserPerfData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BrowserPerfService_CollectWebVitalsPerfData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BrowserWebVitalsPerfData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrowserPerfServiceServer).CollectWebVitalsPerfData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/skywalking.v3.BrowserPerfService/collectWebVitalsPerfData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrowserPerfServiceServer).CollectWebVitalsPerfData(ctx, req.(*BrowserWebVitalsPerfData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BrowserPerfService_CollectResourcePerfData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BrowserResourcePerfData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrowserPerfServiceServer).CollectResourcePerfData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/skywalking.v3.BrowserPerfService/collectResourcePerfData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrowserPerfServiceServer).CollectResourcePerfData(ctx, req.(*BrowserResourcePerfData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BrowserPerfService_CollectWebInteractionsPerfData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BrowserWebInteractionsPerfData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrowserPerfServiceServer).CollectWebInteractionsPerfData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/skywalking.v3.BrowserPerfService/collectWebInteractionsPerfData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrowserPerfServiceServer).CollectWebInteractionsPerfData(ctx, req.(*BrowserWebInteractionsPerfData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -168,6 +270,18 @@ var BrowserPerfService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "collectPerfData",
 			Handler:    _BrowserPerfService_CollectPerfData_Handler,
+		},
+		{
+			MethodName: "collectWebVitalsPerfData",
+			Handler:    _BrowserPerfService_CollectWebVitalsPerfData_Handler,
+		},
+		{
+			MethodName: "collectResourcePerfData",
+			Handler:    _BrowserPerfService_CollectResourcePerfData_Handler,
+		},
+		{
+			MethodName: "collectWebInteractionsPerfData",
+			Handler:    _BrowserPerfService_CollectWebInteractionsPerfData_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
