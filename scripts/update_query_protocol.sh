@@ -42,12 +42,10 @@ tar -zxf "$TEMPDIR"/query-protocol.tgz -C "$TEMPDIR"/query-protocol --strip 1
 
 rm -rf "$TEMPDIR"/query-protocol.tgz
 
-go get github.com/99designs/gqlgen@v0.17.41
+go get github.com/99designs/gqlgen@v0.17.73
 
-"$(go env GOPATH)"/bin/gqlgen -h > /dev/null 2>&1 || go install github.com/99designs/gqlgen
-"$(go env GOPATH)"/bin/gqlgen generate
+go run github.com/99designs/gqlgen@v0.17.73 generate
 
 rm -rf "$TEMPDIR"/query-protocol
 
 go mod tidy
-
