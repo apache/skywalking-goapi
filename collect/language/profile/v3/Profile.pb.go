@@ -293,13 +293,12 @@ func (x *ProfileTaskFinishReport) GetTaskId() string {
 
 // profile for go agent
 type GoProfileData struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	TaskId         string                 `protobuf:"bytes,1,opt,name=taskId,proto3" json:"taskId,omitempty"`
-	TraceSegmentId string                 `protobuf:"bytes,2,opt,name=traceSegmentId,proto3" json:"traceSegmentId,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	TaskId string                 `protobuf:"bytes,1,opt,name=taskId,proto3" json:"taskId,omitempty"`
 	// the truly profile data
-	Payload []byte `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+	Payload []byte `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 	// check last part true or false
-	IsLast        bool `protobuf:"varint,4,opt,name=isLast,proto3" json:"isLast,omitempty"`
+	IsLast        bool `protobuf:"varint,3,opt,name=isLast,proto3" json:"isLast,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -341,13 +340,6 @@ func (x *GoProfileData) GetTaskId() string {
 	return ""
 }
 
-func (x *GoProfileData) GetTraceSegmentId() string {
-	if x != nil {
-		return x.TraceSegmentId
-	}
-	return ""
-}
-
 func (x *GoProfileData) GetPayload() []byte {
 	if x != nil {
 		return x.Payload
@@ -382,12 +374,11 @@ const file_profile_Profile_proto_rawDesc = "" +
 	"\x17ProfileTaskFinishReport\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12(\n" +
 	"\x0fserviceInstance\x18\x02 \x01(\tR\x0fserviceInstance\x12\x16\n" +
-	"\x06taskId\x18\x03 \x01(\tR\x06taskId\"\x81\x01\n" +
+	"\x06taskId\x18\x03 \x01(\tR\x06taskId\"Y\n" +
 	"\rGoProfileData\x12\x16\n" +
-	"\x06taskId\x18\x01 \x01(\tR\x06taskId\x12&\n" +
-	"\x0etraceSegmentId\x18\x02 \x01(\tR\x0etraceSegmentId\x12\x18\n" +
-	"\apayload\x18\x03 \x01(\fR\apayload\x12\x16\n" +
-	"\x06isLast\x18\x04 \x01(\bR\x06isLast2\xde\x02\n" +
+	"\x06taskId\x18\x01 \x01(\tR\x06taskId\x12\x18\n" +
+	"\apayload\x18\x02 \x01(\fR\apayload\x12\x16\n" +
+	"\x06isLast\x18\x03 \x01(\bR\x06isLast2\xde\x02\n" +
 	"\vProfileTask\x12[\n" +
 	"\x16getProfileTaskCommands\x12&.skywalking.v3.ProfileTaskCommandQuery\x1a\x17.skywalking.v3.Commands\"\x00\x12M\n" +
 	"\x0fcollectSnapshot\x12\x1d.skywalking.v3.ThreadSnapshot\x1a\x17.skywalking.v3.Commands\"\x00(\x01\x12L\n" +
