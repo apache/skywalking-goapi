@@ -27,6 +27,8 @@ type ProfileTaskClient interface {
 	GetProfileTaskCommands(ctx context.Context, in *ProfileTaskCommandQuery, opts ...grpc.CallOption) (*v3.Commands, error)
 	// collect dumped thread snapshot
 	CollectSnapshot(ctx context.Context, opts ...grpc.CallOption) (ProfileTask_CollectSnapshotClient, error)
+	// collect bytes profile data from go agent
+	GoProfileReport(ctx context.Context, opts ...grpc.CallOption) (ProfileTask_GoProfileReportClient, error)
 	// report profiling task finished
 	ReportTaskFinish(ctx context.Context, in *ProfileTaskFinishReport, opts ...grpc.CallOption) (*v3.Commands, error)
 }
@@ -82,6 +84,40 @@ func (x *profileTaskCollectSnapshotClient) CloseAndRecv() (*v3.Commands, error) 
 	return m, nil
 }
 
+func (c *profileTaskClient) GoProfileReport(ctx context.Context, opts ...grpc.CallOption) (ProfileTask_GoProfileReportClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ProfileTask_ServiceDesc.Streams[1], "/skywalking.v3.ProfileTask/goProfileReport", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &profileTaskGoProfileReportClient{stream}
+	return x, nil
+}
+
+type ProfileTask_GoProfileReportClient interface {
+	Send(*GoProfileData) error
+	CloseAndRecv() (*v3.Commands, error)
+	grpc.ClientStream
+}
+
+type profileTaskGoProfileReportClient struct {
+	grpc.ClientStream
+}
+
+func (x *profileTaskGoProfileReportClient) Send(m *GoProfileData) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *profileTaskGoProfileReportClient) CloseAndRecv() (*v3.Commands, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(v3.Commands)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *profileTaskClient) ReportTaskFinish(ctx context.Context, in *ProfileTaskFinishReport, opts ...grpc.CallOption) (*v3.Commands, error) {
 	out := new(v3.Commands)
 	err := c.cc.Invoke(ctx, "/skywalking.v3.ProfileTask/reportTaskFinish", in, out, opts...)
@@ -99,6 +135,8 @@ type ProfileTaskServer interface {
 	GetProfileTaskCommands(context.Context, *ProfileTaskCommandQuery) (*v3.Commands, error)
 	// collect dumped thread snapshot
 	CollectSnapshot(ProfileTask_CollectSnapshotServer) error
+	// collect bytes profile data from go agent
+	GoProfileReport(ProfileTask_GoProfileReportServer) error
 	// report profiling task finished
 	ReportTaskFinish(context.Context, *ProfileTaskFinishReport) (*v3.Commands, error)
 	mustEmbedUnimplementedProfileTaskServer()
@@ -113,6 +151,9 @@ func (UnimplementedProfileTaskServer) GetProfileTaskCommands(context.Context, *P
 }
 func (UnimplementedProfileTaskServer) CollectSnapshot(ProfileTask_CollectSnapshotServer) error {
 	return status.Errorf(codes.Unimplemented, "method CollectSnapshot not implemented")
+}
+func (UnimplementedProfileTaskServer) GoProfileReport(ProfileTask_GoProfileReportServer) error {
+	return status.Errorf(codes.Unimplemented, "method GoProfileReport not implemented")
 }
 func (UnimplementedProfileTaskServer) ReportTaskFinish(context.Context, *ProfileTaskFinishReport) (*v3.Commands, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportTaskFinish not implemented")
@@ -174,6 +215,32 @@ func (x *profileTaskCollectSnapshotServer) Recv() (*ThreadSnapshot, error) {
 	return m, nil
 }
 
+func _ProfileTask_GoProfileReport_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ProfileTaskServer).GoProfileReport(&profileTaskGoProfileReportServer{stream})
+}
+
+type ProfileTask_GoProfileReportServer interface {
+	SendAndClose(*v3.Commands) error
+	Recv() (*GoProfileData, error)
+	grpc.ServerStream
+}
+
+type profileTaskGoProfileReportServer struct {
+	grpc.ServerStream
+}
+
+func (x *profileTaskGoProfileReportServer) SendAndClose(m *v3.Commands) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *profileTaskGoProfileReportServer) Recv() (*GoProfileData, error) {
+	m := new(GoProfileData)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _ProfileTask_ReportTaskFinish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProfileTaskFinishReport)
 	if err := dec(in); err != nil {
@@ -212,6 +279,11 @@ var ProfileTask_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "collectSnapshot",
 			Handler:       _ProfileTask_CollectSnapshot_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "goProfileReport",
+			Handler:       _ProfileTask_GoProfileReport_Handler,
 			ClientStreams: true,
 		},
 	},
