@@ -1,6 +1,6 @@
 module skywalking.apache.org/repo/goapi
 
-go 1.24
+go 1.19
 
 require (
 	github.com/99designs/gqlgen v0.17.43
