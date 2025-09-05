@@ -3,10 +3,10 @@ module skywalking.apache.org/repo/goapi
 go 1.24
 
 require (
-	github.com/99designs/gqlgen v0.17.73
+	github.com/99designs/gqlgen v0.17.43
 	github.com/vektah/gqlparser/v2 v2.5.26
 	google.golang.org/grpc v1.55.0
-	google.golang.org/protobuf v1.30.0  // indirect
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
