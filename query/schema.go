@@ -383,6 +383,12 @@ type Endpoint struct {
 	Name string `json:"name"`
 }
 
+type EndpointCondition struct {
+	ServiceName  string  `json:"serviceName"`
+	EndpointName string  `json:"endpointName"`
+	Layer        *string `json:"layer,omitempty"`
+}
+
 type EndpointInfo struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -494,6 +500,12 @@ type HierarchyServiceRelation struct {
 	LowerService *HierarchyRelatedService `json:"lowerService"`
 }
 
+type InstanceCondition struct {
+	ServiceName  string  `json:"serviceName"`
+	InstanceName string  `json:"instanceName"`
+	Layer        *string `json:"layer,omitempty"`
+}
+
 type InstanceHierarchy struct {
 	Relations []*HierarchyInstanceRelation `json:"relations"`
 }
@@ -551,6 +563,19 @@ type LogQueryCondition struct {
 	ServiceID                  *string              `json:"serviceId,omitempty"`
 	ServiceInstanceID          *string              `json:"serviceInstanceId,omitempty"`
 	EndpointID                 *string              `json:"endpointId,omitempty"`
+	RelatedTrace               *TraceScopeCondition `json:"relatedTrace,omitempty"`
+	QueryDuration              *Duration            `json:"queryDuration,omitempty"`
+	Paging                     *Pagination          `json:"paging"`
+	Tags                       []*LogTag            `json:"tags,omitempty"`
+	KeywordsOfContent          []string             `json:"keywordsOfContent,omitempty"`
+	ExcludingKeywordsOfContent []string             `json:"excludingKeywordsOfContent,omitempty"`
+	QueryOrder                 *Order               `json:"queryOrder,omitempty"`
+}
+
+type LogQueryConditionByName struct {
+	Service                    *ServiceCondition    `json:"service,omitempty"`
+	Instance                   *InstanceCondition   `json:"instance,omitempty"`
+	Endpoint                   *EndpointCondition   `json:"endpoint,omitempty"`
 	RelatedTrace               *TraceScopeCondition `json:"relatedTrace,omitempty"`
 	QueryDuration              *Duration            `json:"queryDuration,omitempty"`
 	Paging                     *Pagination          `json:"paging"`
@@ -843,10 +868,16 @@ type RecordCondition struct {
 }
 
 type RecordsTTL struct {
-	Value            int `json:"value"`
-	SuperDataset     int `json:"superDataset"`
-	ColdValue        int `json:"coldValue"`
-	ColdSuperDataset int `json:"coldSuperDataset"`
+	Normal              int `json:"normal"`
+	Trace               int `json:"trace"`
+	ZipkinTrace         int `json:"zipkinTrace"`
+	Log                 int `json:"log"`
+	BrowserErrorLog     int `json:"browserErrorLog"`
+	ColdNormal          int `json:"coldNormal"`
+	ColdTrace           int `json:"coldTrace"`
+	ColdZipkinTrace     int `json:"coldZipkinTrace"`
+	ColdLog             int `json:"coldLog"`
+	ColdBrowserErrorLog int `json:"coldBrowserErrorLog"`
 }
 
 type Ref struct {
@@ -854,6 +885,11 @@ type Ref struct {
 	ParentSegmentID string  `json:"parentSegmentId"`
 	ParentSpanID    int     `json:"parentSpanId"`
 	Type            RefType `json:"type"`
+}
+
+type RetrievedTimeRange struct {
+	StartTime int64 `json:"startTime"`
+	EndTime   int64 `json:"endTime"`
 }
 
 type SegmentProfileAnalyzeQuery struct {
@@ -875,6 +911,11 @@ type Service struct {
 	ShortName string   `json:"shortName"`
 	Layers    []string `json:"layers"`
 	Normal    *bool    `json:"normal,omitempty"`
+}
+
+type ServiceCondition struct {
+	ServiceName string  `json:"serviceName"`
+	Layer       *string `json:"layer,omitempty"`
 }
 
 type ServiceHierarchy struct {
@@ -1011,6 +1052,12 @@ type TraceBrief struct {
 	DebuggingTrace *DebuggingTrace `json:"debuggingTrace,omitempty"`
 }
 
+type TraceList struct {
+	Traces             []*TraceV2          `json:"traces"`
+	RetrievedTimeRange *RetrievedTimeRange `json:"retrievedTimeRange"`
+	DebuggingTrace     *DebuggingTrace     `json:"debuggingTrace,omitempty"`
+}
+
 type TraceQueryCondition struct {
 	ServiceID         *string     `json:"serviceId,omitempty"`
 	ServiceInstanceID *string     `json:"serviceInstanceId,omitempty"`
@@ -1025,10 +1072,28 @@ type TraceQueryCondition struct {
 	Paging            *Pagination `json:"paging"`
 }
 
+type TraceQueryConditionByName struct {
+	Service          *ServiceCondition  `json:"service,omitempty"`
+	Instance         *InstanceCondition `json:"instance,omitempty"`
+	Endpoint         *EndpointCondition `json:"endpoint,omitempty"`
+	TraceID          *string            `json:"traceId,omitempty"`
+	QueryDuration    *Duration          `json:"queryDuration,omitempty"`
+	MinTraceDuration *int               `json:"minTraceDuration,omitempty"`
+	MaxTraceDuration *int               `json:"maxTraceDuration,omitempty"`
+	TraceState       TraceState         `json:"traceState"`
+	QueryOrder       QueryOrder         `json:"queryOrder"`
+	Tags             []*SpanTag         `json:"tags,omitempty"`
+	Paging           *Pagination        `json:"paging"`
+}
+
 type TraceScopeCondition struct {
 	TraceID   string  `json:"traceId"`
 	SegmentID *string `json:"segmentId,omitempty"`
 	SpanID    *int    `json:"spanId,omitempty"`
+}
+
+type TraceV2 struct {
+	Spans []*Span `json:"spans"`
 }
 
 type AsyncProfilerEventType string
