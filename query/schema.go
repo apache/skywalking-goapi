@@ -728,6 +728,76 @@ type PodContainers struct {
 	Containers  []string `json:"containers"`
 }
 
+type PprofAnalyzation struct {
+	Tree *PprofStackTree `json:"tree,omitempty"`
+}
+
+type PprofAnalyzationRequest struct {
+	TaskID      string   `json:"taskId"`
+	InstanceIds []string `json:"instanceIds"`
+}
+
+type PprofStackElement struct {
+	ID            string `json:"id"`
+	ParentID      string `json:"parentId"`
+	CodeSignature string `json:"codeSignature"`
+	Total         int64  `json:"total"`
+	Self          int64  `json:"self"`
+}
+
+type PprofStackTree struct {
+	Elements []*PprofStackElement `json:"elements,omitempty"`
+}
+
+type PprofTask struct {
+	ID                 string         `json:"id"`
+	ServiceID          string         `json:"serviceId"`
+	ServiceInstanceIds []string       `json:"serviceInstanceIds"`
+	CreateTime         int64          `json:"createTime"`
+	Events             PprofEventType `json:"events"`
+	Duration           *int           `json:"duration,omitempty"`
+	DumpPeriod         *int           `json:"dumpPeriod,omitempty"`
+}
+
+type PprofTaskCreationRequest struct {
+	ServiceID          string         `json:"serviceId"`
+	ServiceInstanceIds []string       `json:"serviceInstanceIds"`
+	Duration           *int           `json:"duration,omitempty"`
+	Events             PprofEventType `json:"events"`
+	DumpPeriod         *int           `json:"dumpPeriod,omitempty"`
+}
+
+type PprofTaskCreationResult struct {
+	Code        PprofTaskCreationType `json:"code"`
+	ErrorReason *string               `json:"errorReason,omitempty"`
+	ID          *string               `json:"id,omitempty"`
+}
+
+type PprofTaskListRequest struct {
+	ServiceID     string    `json:"serviceId"`
+	QueryDuration *Duration `json:"queryDuration,omitempty"`
+	Limit         *int      `json:"limit,omitempty"`
+}
+
+type PprofTaskListResult struct {
+	ErrorReason *string      `json:"errorReason,omitempty"`
+	Tasks       []*PprofTask `json:"tasks,omitempty"`
+}
+
+type PprofTaskLog struct {
+	ID            string                    `json:"id"`
+	InstanceID    string                    `json:"instanceId"`
+	InstanceName  string                    `json:"instanceName"`
+	OperationType PprofTaskLogOperationType `json:"operationType"`
+	OperationTime int64                     `json:"operationTime"`
+}
+
+type PprofTaskProgress struct {
+	Logs               []*PprofTaskLog `json:"logs,omitempty"`
+	ErrorInstanceIds   []*string       `json:"errorInstanceIds,omitempty"`
+	SuccessInstanceIds []*string       `json:"successInstanceIds,omitempty"`
+}
+
 type Process struct {
 	ID           string       `json:"id"`
 	Name         string       `json:"name"`
@@ -848,77 +918,6 @@ type ProfiledTraceSegments struct {
 	Duration      int             `json:"duration"`
 	Start         string          `json:"start"`
 	Spans         []*ProfiledSpan `json:"spans"`
-}
-
-type PprofAnalyzation struct {
-	Tree *PprofStackTree `json:"tree,omitempty"`
-}
-
-type PprofAnalyzationRequest struct {
-	TaskID      string   `json:"taskId"`
-	InstanceIds []string `json:"instanceIds"`
-}
-
-type PprofStackElement struct {
-	ID            string `json:"id"`
-	ParentID      string `json:"parentId"`
-	CodeSignature string `json:"codeSignature"`
-	Total         int64  `json:"total"`
-	Self          int64  `json:"self"`
-}
-
-type PprofStackTree struct {
-	Elements []*PprofStackElement `json:"elements,omitempty"`
-}
-
-type PprofTask struct {
-	ID                 string         `json:"id"`
-	ServiceID          string         `json:"serviceId"`
-	ServiceInstanceIds []string       `json:"serviceInstanceIds"`
-	CreateTime         int64          `json:"createTime"`
-	Events             PprofEventType `json:"events"`
-	Duration           *int           `json:"duration,omitempty"`
-	DumpPeriod         *int           `json:"dumpPeriod,omitempty"`
-}
-
-type PprofTaskCreationRequest struct {
-	ServiceID          string         `json:"serviceId"`
-	ServiceInstanceIds []string       `json:"serviceInstanceIds"`
-	Duration           *int           `json:"duration,omitempty"`
-	Events             PprofEventType `json:"events"`
-	DumpPeriod         *int           `json:"dumpPeriod,omitempty"`
-}
-
-type PprofTaskCreationResult struct {
-	Code        PprofTaskCreationType `json:"code"`
-	ErrorReason *string               `json:"errorReason,omitempty"`
-	ID          *string               `json:"id,omitempty"`
-}
-
-type PprofTaskListRequest struct {
-	ServiceID     string    `json:"serviceId"`
-	StartTime     *int64    `json:"startTime,omitempty"`
-	EndTime       *int64    `json:"endTime,omitempty"`
-	Limit         *int      `json:"limit,omitempty"`
-}
-
-type PprofTaskListResult struct {
-	ErrorReason *string      `json:"errorReason,omitempty"`
-	Tasks       []*PprofTask `json:"tasks,omitempty"`
-}
-
-type PprofTaskLog struct {
-	ID            string                      `json:"id"`
-	InstanceID    string                      `json:"instanceId"`
-	InstanceName  string                      `json:"instanceName"`
-	OperationType PprofTaskLogOperationType   `json:"operationType"`
-	OperationTime int64                       `json:"operationTime"`
-}
-
-type PprofTaskProgress struct {
-	Logs               []*PprofTaskLog `json:"logs,omitempty"`
-	ErrorInstanceIds   []*string       `json:"errorInstanceIds,omitempty"`
-	SuccessInstanceIds []*string       `json:"successInstanceIds,omitempty"`
 }
 
 type Query struct {
@@ -2227,61 +2226,6 @@ func (e Order) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-type ProfileTaskLogOperationType string
-
-const (
-	ProfileTaskLogOperationTypeNotified          ProfileTaskLogOperationType = "NOTIFIED"
-	ProfileTaskLogOperationTypeExecutionFinished ProfileTaskLogOperationType = "EXECUTION_FINISHED"
-)
-
-var AllProfileTaskLogOperationType = []ProfileTaskLogOperationType{
-	ProfileTaskLogOperationTypeNotified,
-	ProfileTaskLogOperationTypeExecutionFinished,
-}
-
-func (e ProfileTaskLogOperationType) IsValid() bool {
-	switch e {
-	case ProfileTaskLogOperationTypeNotified, ProfileTaskLogOperationTypeExecutionFinished:
-		return true
-	}
-	return false
-}
-
-func (e ProfileTaskLogOperationType) String() string {
-	return string(e)
-}
-
-func (e *ProfileTaskLogOperationType) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ProfileTaskLogOperationType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ProfileTaskLogOperationType", str)
-	}
-	return nil
-}
-
-func (e ProfileTaskLogOperationType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-func (e *ProfileTaskLogOperationType) UnmarshalJSON(b []byte) error {
-	s, err := strconv.Unquote(string(b))
-	if err != nil {
-		return err
-	}
-	return e.UnmarshalGQL(s)
-}
-
-func (e ProfileTaskLogOperationType) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	e.MarshalGQL(&buf)
-	return buf.Bytes(), nil
-}
-
 type PprofEventType string
 
 const (
@@ -2407,10 +2351,10 @@ func (e PprofTaskCreationType) MarshalJSON() ([]byte, error) {
 type PprofTaskLogOperationType string
 
 const (
-	PprofTaskLogOperationTypeNotified                   PprofTaskLogOperationType = "NOTIFIED"
-	PprofTaskLogOperationTypeExecutionFinished          PprofTaskLogOperationType = "EXECUTION_FINISHED"
+	PprofTaskLogOperationTypeNotified                     PprofTaskLogOperationType = "NOTIFIED"
+	PprofTaskLogOperationTypeExecutionFinished            PprofTaskLogOperationType = "EXECUTION_FINISHED"
 	PprofTaskLogOperationTypePprofUploadFileTooLargeError PprofTaskLogOperationType = "PPROF_UPLOAD_FILE_TOO_LARGE_ERROR"
-	PprofTaskLogOperationTypeExecutionTaskError         PprofTaskLogOperationType = "EXECUTION_TASK_ERROR"
+	PprofTaskLogOperationTypeExecutionTaskError           PprofTaskLogOperationType = "EXECUTION_TASK_ERROR"
 )
 
 var AllPprofTaskLogOperationType = []PprofTaskLogOperationType{
@@ -2458,6 +2402,61 @@ func (e *PprofTaskLogOperationType) UnmarshalJSON(b []byte) error {
 }
 
 func (e PprofTaskLogOperationType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ProfileTaskLogOperationType string
+
+const (
+	ProfileTaskLogOperationTypeNotified          ProfileTaskLogOperationType = "NOTIFIED"
+	ProfileTaskLogOperationTypeExecutionFinished ProfileTaskLogOperationType = "EXECUTION_FINISHED"
+)
+
+var AllProfileTaskLogOperationType = []ProfileTaskLogOperationType{
+	ProfileTaskLogOperationTypeNotified,
+	ProfileTaskLogOperationTypeExecutionFinished,
+}
+
+func (e ProfileTaskLogOperationType) IsValid() bool {
+	switch e {
+	case ProfileTaskLogOperationTypeNotified, ProfileTaskLogOperationTypeExecutionFinished:
+		return true
+	}
+	return false
+}
+
+func (e ProfileTaskLogOperationType) String() string {
+	return string(e)
+}
+
+func (e *ProfileTaskLogOperationType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProfileTaskLogOperationType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProfileTaskLogOperationType", str)
+	}
+	return nil
+}
+
+func (e ProfileTaskLogOperationType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ProfileTaskLogOperationType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ProfileTaskLogOperationType) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil
