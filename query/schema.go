@@ -10,14 +10,25 @@ import (
 )
 
 type AlarmMessage struct {
-	StartTime int64          `json:"startTime"`
-	Scope     *Scope         `json:"scope,omitempty"`
-	ID        string         `json:"id"`
-	Name      string         `json:"name"`
-	Message   string         `json:"message"`
-	Events    []*Event       `json:"events"`
-	Tags      []*KeyValue    `json:"tags"`
-	Snapshot  *AlarmSnapshot `json:"snapshot"`
+	StartTime    int64          `json:"startTime"`
+	RecoveryTime *int64         `json:"recoveryTime,omitempty"`
+	Scope        *Scope         `json:"scope,omitempty"`
+	ID           string         `json:"id"`
+	Name         string         `json:"name"`
+	Message      string         `json:"message"`
+	Events       []*Event       `json:"events"`
+	Tags         []*KeyValue    `json:"tags"`
+	Snapshot     *AlarmSnapshot `json:"snapshot"`
+}
+
+type AlarmQueryCondition struct {
+	Duration  *Duration   `json:"duration"`
+	Paging    *Pagination `json:"paging"`
+	Entities  []*Entity   `json:"entities,omitempty"`
+	Layer     *string     `json:"layer,omitempty"`
+	RuleNames []string    `json:"ruleNames,omitempty"`
+	Keyword   *string     `json:"keyword,omitempty"`
+	Tags      []*AlarmTag `json:"tags,omitempty"`
 }
 
 type AlarmSnapshot struct {
@@ -244,14 +255,55 @@ type ContinuousProfilingURICause struct {
 	Current   int64   `json:"current"`
 }
 
-type DashboardConfiguration struct {
-	ID            string `json:"id"`
-	Configuration string `json:"configuration"`
+type ConversationCondition struct {
+	Service      *ServiceCondition  `json:"service"`
+	Conversation string             `json:"conversation"`
+	Instance     *InstanceCondition `json:"instance,omitempty"`
 }
 
-type DashboardSetting struct {
-	ID            string `json:"id"`
-	Configuration string `json:"configuration"`
+type ConversationList struct {
+	ErrorReason    *string            `json:"errorReason,omitempty"`
+	Conversations  []*ConversationRow `json:"conversations"`
+	DebuggingTrace *DebuggingTrace    `json:"debuggingTrace,omitempty"`
+}
+
+type ConversationListCondition struct {
+	Service  *ServiceCondition  `json:"service"`
+	Instance *InstanceCondition `json:"instance,omitempty"`
+	Limit    *int               `json:"limit,omitempty"`
+}
+
+type ConversationRawFile struct {
+	ID        string                 `json:"id"`
+	Format    ConversationFileFormat `json:"format"`
+	Session   *string                `json:"session,omitempty"`
+	Seq       *int                   `json:"seq,omitempty"`
+	Round     *int                   `json:"round,omitempty"`
+	Digest    string                 `json:"digest"`
+	Bytes     int                    `json:"bytes"`
+	Timestamp int64                  `json:"timestamp"`
+	Body      *string                `json:"body,omitempty"`
+}
+
+type ConversationRawFiles struct {
+	ErrorReason    *string                `json:"errorReason,omitempty"`
+	Files          []*ConversationRawFile `json:"files"`
+	DebuggingTrace *DebuggingTrace        `json:"debuggingTrace,omitempty"`
+}
+
+type ConversationRow struct {
+	Conversation        string  `json:"conversation"`
+	ServiceInstanceID   string  `json:"serviceInstanceId"`
+	ServiceInstanceName string  `json:"serviceInstanceName"`
+	Title               *string `json:"title,omitempty"`
+	Round               int     `json:"round"`
+	Talks               int     `json:"talks"`
+	Steps               int     `json:"steps"`
+	Streams             int     `json:"streams"`
+	Segments            int     `json:"segments"`
+	Unresolved          int     `json:"unresolved"`
+	From                int64   `json:"from"`
+	To                  int64   `json:"to"`
 }
 
 type Database struct {
@@ -459,6 +511,65 @@ type ExpressionResult struct {
 	DebuggingTrace *DebuggingTrace      `json:"debuggingTrace,omitempty"`
 }
 
+type GenAIEvaluationRecord struct {
+	TraceRef        *GenAITraceRef           `json:"traceRef"`
+	ServiceID       *string                  `json:"serviceId,omitempty"`
+	ServiceName     *string                  `json:"serviceName,omitempty"`
+	ProviderID      *string                  `json:"providerId,omitempty"`
+	ProviderName    *string                  `json:"providerName,omitempty"`
+	ModelID         *string                  `json:"modelId,omitempty"`
+	ModelName       *string                  `json:"modelName,omitempty"`
+	OperationName   *string                  `json:"operationName,omitempty"`
+	TaskName        *string                  `json:"taskName,omitempty"`
+	ValueType       GenAIEvaluationValueType `json:"valueType"`
+	ScoreValue      *int64                   `json:"scoreValue,omitempty"`
+	BooleanValue    *bool                    `json:"booleanValue,omitempty"`
+	StringValue     *string                  `json:"stringValue,omitempty"`
+	Reason          *string                  `json:"reason,omitempty"`
+	EvaluationLevel *string                  `json:"evaluationLevel,omitempty"`
+	JudgeModel      *string                  `json:"judgeModel,omitempty"`
+	EvaluationTime  *int64                   `json:"evaluationTime,omitempty"`
+}
+
+type GenAIEvaluationRecordQueryCondition struct {
+	ProviderID      *string                      `json:"providerId,omitempty"`
+	ModelID         *string                      `json:"modelId,omitempty"`
+	ServiceID       *string                      `json:"serviceId,omitempty"`
+	TaskName        *string                      `json:"taskName,omitempty"`
+	ValueType       *GenAIEvaluationValueType    `json:"valueType,omitempty"`
+	MinScore        *int64                       `json:"minScore,omitempty"`
+	MaxScore        *int64                       `json:"maxScore,omitempty"`
+	BooleanValue    *bool                        `json:"booleanValue,omitempty"`
+	EvaluationLevel *string                      `json:"evaluationLevel,omitempty"`
+	JudgeModel      *string                      `json:"judgeModel,omitempty"`
+	QueryDuration   *Duration                    `json:"queryDuration,omitempty"`
+	RelatedTrace    *GenAITraceScopeCondition    `json:"relatedTrace,omitempty"`
+	Paging          *Pagination                  `json:"paging"`
+	SortBy          *GenAIEvaluationRecordSortBy `json:"sortBy,omitempty"`
+	QueryOrder      *Order                       `json:"queryOrder,omitempty"`
+}
+
+type GenAIEvaluationRecords struct {
+	GenAIEvaluationRecordList []*GenAIEvaluationRecord `json:"genAIEvaluationRecordList"`
+	DebuggingTrace            *DebuggingTrace          `json:"debuggingTrace,omitempty"`
+}
+
+type GenAITraceRef struct {
+	Type      GenAITraceRefType `json:"type"`
+	TraceID   string            `json:"traceId"`
+	SegmentID *string           `json:"segmentId,omitempty"`
+	SpanIndex *int              `json:"spanIndex,omitempty"`
+	SpanID    *string           `json:"spanId,omitempty"`
+}
+
+type GenAITraceScopeCondition struct {
+	Type      GenAITraceRefType `json:"type"`
+	TraceID   string            `json:"traceId"`
+	SegmentID *string           `json:"segmentId,omitempty"`
+	SpanIndex *int              `json:"spanIndex,omitempty"`
+	SpanID    *string           `json:"spanId,omitempty"`
+}
+
 type HealthStatus struct {
 	Score   int     `json:"score"`
 	Details *string `json:"details,omitempty"`
@@ -630,17 +741,6 @@ type MQEValues struct {
 	Values []*MQEValue `json:"values"`
 }
 
-type MenuItem struct {
-	Title        string      `json:"title"`
-	Icon         *string     `json:"icon,omitempty"`
-	Layer        string      `json:"layer"`
-	Activate     bool        `json:"activate"`
-	SubItems     []*MenuItem `json:"subItems"`
-	Description  *string     `json:"description,omitempty"`
-	DocumentLink *string     `json:"documentLink,omitempty"`
-	I18nKey      *string     `json:"i18nKey,omitempty"`
-}
-
 type Metadata struct {
 	Labels []*KeyValue `json:"labels"`
 }
@@ -662,6 +762,7 @@ type MetricsCondition struct {
 }
 
 type MetricsTTL struct {
+	Metadata   int `json:"metadata"`
 	Minute     int `json:"minute"`
 	Hour       int `json:"hour"`
 	Day        int `json:"day"`
@@ -676,10 +777,6 @@ type MetricsValues struct {
 }
 
 type Mutation struct {
-}
-
-type NewDashboardSetting struct {
-	Configuration string `json:"configuration"`
 }
 
 type Node struct {
@@ -1059,12 +1156,6 @@ type SpanAttachedEvent struct {
 type SpanTag struct {
 	Key   string  `json:"key"`
 	Value *string `json:"value,omitempty"`
-}
-
-type TemplateChangeStatus struct {
-	ID      string  `json:"id"`
-	Status  bool    `json:"status"`
-	Message *string `json:"message,omitempty"`
 }
 
 type Thermodynamic struct {
@@ -1515,6 +1606,61 @@ func (e *ContinuousProfilingTargetType) UnmarshalJSON(b []byte) error {
 }
 
 func (e ContinuousProfilingTargetType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ConversationFileFormat string
+
+const (
+	ConversationFileFormatSd ConversationFileFormat = "SD"
+	ConversationFileFormatSf ConversationFileFormat = "SF"
+)
+
+var AllConversationFileFormat = []ConversationFileFormat{
+	ConversationFileFormatSd,
+	ConversationFileFormatSf,
+}
+
+func (e ConversationFileFormat) IsValid() bool {
+	switch e {
+	case ConversationFileFormatSd, ConversationFileFormatSf:
+		return true
+	}
+	return false
+}
+
+func (e ConversationFileFormat) String() string {
+	return string(e)
+}
+
+func (e *ConversationFileFormat) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ConversationFileFormat(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ConversationFileFormat", str)
+	}
+	return nil
+}
+
+func (e ConversationFileFormat) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ConversationFileFormat) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ConversationFileFormat) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil
@@ -1975,6 +2121,175 @@ func (e *ExpressionResultType) UnmarshalJSON(b []byte) error {
 }
 
 func (e ExpressionResultType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type GenAIEvaluationRecordSortBy string
+
+const (
+	GenAIEvaluationRecordSortByEvaluationTime GenAIEvaluationRecordSortBy = "EVALUATION_TIME"
+	GenAIEvaluationRecordSortByScoreValue     GenAIEvaluationRecordSortBy = "SCORE_VALUE"
+)
+
+var AllGenAIEvaluationRecordSortBy = []GenAIEvaluationRecordSortBy{
+	GenAIEvaluationRecordSortByEvaluationTime,
+	GenAIEvaluationRecordSortByScoreValue,
+}
+
+func (e GenAIEvaluationRecordSortBy) IsValid() bool {
+	switch e {
+	case GenAIEvaluationRecordSortByEvaluationTime, GenAIEvaluationRecordSortByScoreValue:
+		return true
+	}
+	return false
+}
+
+func (e GenAIEvaluationRecordSortBy) String() string {
+	return string(e)
+}
+
+func (e *GenAIEvaluationRecordSortBy) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GenAIEvaluationRecordSortBy(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid GenAIEvaluationRecordSortBy", str)
+	}
+	return nil
+}
+
+func (e GenAIEvaluationRecordSortBy) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *GenAIEvaluationRecordSortBy) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e GenAIEvaluationRecordSortBy) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type GenAIEvaluationValueType string
+
+const (
+	GenAIEvaluationValueTypeScore   GenAIEvaluationValueType = "SCORE"
+	GenAIEvaluationValueTypeBoolean GenAIEvaluationValueType = "BOOLEAN"
+	GenAIEvaluationValueTypeString  GenAIEvaluationValueType = "STRING"
+	GenAIEvaluationValueTypeJSON    GenAIEvaluationValueType = "JSON"
+)
+
+var AllGenAIEvaluationValueType = []GenAIEvaluationValueType{
+	GenAIEvaluationValueTypeScore,
+	GenAIEvaluationValueTypeBoolean,
+	GenAIEvaluationValueTypeString,
+	GenAIEvaluationValueTypeJSON,
+}
+
+func (e GenAIEvaluationValueType) IsValid() bool {
+	switch e {
+	case GenAIEvaluationValueTypeScore, GenAIEvaluationValueTypeBoolean, GenAIEvaluationValueTypeString, GenAIEvaluationValueTypeJSON:
+		return true
+	}
+	return false
+}
+
+func (e GenAIEvaluationValueType) String() string {
+	return string(e)
+}
+
+func (e *GenAIEvaluationValueType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GenAIEvaluationValueType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid GenAIEvaluationValueType", str)
+	}
+	return nil
+}
+
+func (e GenAIEvaluationValueType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *GenAIEvaluationValueType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e GenAIEvaluationValueType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type GenAITraceRefType string
+
+const (
+	GenAITraceRefTypeSkywalkingNative GenAITraceRefType = "SKYWALKING_NATIVE"
+	GenAITraceRefTypeOtlp             GenAITraceRefType = "OTLP"
+)
+
+var AllGenAITraceRefType = []GenAITraceRefType{
+	GenAITraceRefTypeSkywalkingNative,
+	GenAITraceRefTypeOtlp,
+}
+
+func (e GenAITraceRefType) IsValid() bool {
+	switch e {
+	case GenAITraceRefTypeSkywalkingNative, GenAITraceRefTypeOtlp:
+		return true
+	}
+	return false
+}
+
+func (e GenAITraceRefType) String() string {
+	return string(e)
+}
+
+func (e *GenAITraceRefType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GenAITraceRefType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid GenAITraceRefType", str)
+	}
+	return nil
+}
+
+func (e GenAITraceRefType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *GenAITraceRefType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e GenAITraceRefType) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil
